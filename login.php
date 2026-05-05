@@ -34,7 +34,7 @@ if(isset($_POST['login'])){
 <!DOCTYPE html>
 <html>
 <head>
-<title>Login - Toko Ibu Iqbal</title>
+<title>Login - Catering Ibu Iqbal</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="https://kit.fontawesome.com/4adad1b6d6.js" crossorigin="anonymous"></script>

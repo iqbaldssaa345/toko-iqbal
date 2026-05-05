@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Toko Ibu Iqbal</title>
+<title> Catering Ibu Iqbal</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -196,7 +196,7 @@ body{
 
 <!-- NAVBAR -->
 <div class="navbar" id="navbar">
-    <h2>Toko Ibu Iqbal</h2>
+    <h2>Katering Ibu Iqbal</h2>
     <div>
         <a href="#about">About</a>
         <a href="#produk">Menu</a>
@@ -256,10 +256,10 @@ body{
 
 <!-- FOOTER -->
 <div class="footer">
-    <h3>Toko Ibu Iqbal</h3>
+    <h3>Catering Ibu Iqbal</h3>
     <p>jalan puri nirwana 1 </p>
     <p>Telp: 08123456789</p>
-    <p>© 2026 Toko Ibu Iqbal. </p>
+    <p>© 2026 Catering Ibu Iqbal. </p>
 </div>
 
 <script>
