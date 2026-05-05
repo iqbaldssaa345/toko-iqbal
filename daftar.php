@@ -180,6 +180,10 @@ button:hover{
         <button name="daftar">Daftar Sekarang</button>
 
     </form>
+     <div class="link">
+        <p><a href="index.php">← Kembali ke Beranda</a></p>
+    </div>
+
 
     <div class="link">
         <p>Sudah punya akun? <a href="login.php">Login</a></p>
