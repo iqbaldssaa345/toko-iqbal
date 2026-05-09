@@ -47,8 +47,17 @@ if(isset($_POST['edit'])){
     exit;
 }
 
-/* ================= DATA ================= */
-$data = mysqli_query($conn,"SELECT * FROM users ORDER BY id DESC");
+/* ================= SEARCH ================= */
+$keyword = "";
+if(isset($_GET['cari'])){
+    $keyword = mysqli_real_escape_string($conn,$_GET['cari']);
+    $data = mysqli_query($conn,"SELECT * FROM users 
+    WHERE username LIKE '%$keyword%' 
+    OR role LIKE '%$keyword%' 
+    ORDER BY id ASC");
+}else{
+    $data = mysqli_query($conn,"SELECT * FROM users ORDER BY id ASC");
+}
 ?>
 
 <!DOCTYPE html>
@@ -66,7 +75,6 @@ body{
     font-family:'Poppins',sans-serif;
 }
 
-/* SIDEBAR */
 .sidebar{
     width:250px;
     height:100vh;
@@ -82,21 +90,17 @@ body{
     color:#ccc;
     text-decoration:none;
     border-radius:12px;
-    transition:0.3s;
 }
 .sidebar a:hover{
     background:rgba(255,255,255,0.1);
     color:white;
-    transform:translateX(5px);
 }
 
-/* CONTENT */
 .content{
     margin-left:270px;
     padding:30px;
 }
 
-/* TOPBAR */
 .topbar{
     background:white;
     padding:15px 20px;
@@ -105,15 +109,13 @@ body{
     box-shadow:0 5px 20px rgba(0,0,0,0.2);
 }
 
-/* CARD */
 .card-box{
-    background:rgba(255,255,255,0.95);
+    background:white;
     border-radius:20px;
     padding:25px;
     box-shadow:0 15px 40px rgba(0,0,0,0.3);
 }
 
-/* BADGE */
 .badge-role{
     padding:6px 12px;
     border-radius:20px;
@@ -124,10 +126,9 @@ body{
 .petugas{background:#ff9800;}
 .pengunjung{background:#4caf50;}
 
-/* BUTTON */
 .btn{border-radius:20px;}
+input{border-radius:20px;}
 </style>
-
 </head>
 
 <body>
@@ -135,6 +136,7 @@ body{
 <!-- SIDEBAR -->
 <div class="sidebar">
     <h4>🛒 Admin</h4>
+
     <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
     <a href="users.php"><i class="fa fa-users"></i> Data User</a>
     <a href="produk.php"><i class="fa fa-box"></i> Produk</a>
@@ -142,21 +144,29 @@ body{
     <a href="../logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a>
 </div>
 
+
 <div class="content">
 
-<div class="topbar">
+<!-- TOPBAR + SEARCH -->
+<div class="topbar d-flex justify-content-between align-items-center">
     <h5>👥 Data User</h5>
+
+    <form method="GET" class="d-flex gap-2">
+        <input type="text" name="cari" class="form-control"
+        placeholder="Cari username / role..."
+        value="<?= $keyword ?>">
+
+        <button class="btn btn-dark">
+            <i class="fa fa-search"></i>
+        </button>
 </div>
 
 <div class="card-box">
 
-<div class="d-flex justify-content-between mb-3">
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambah">
-        <i class="fa fa-plus"></i> Tambah User
-    </button>
-</div>
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#tambah">
+    <i class="fa fa-plus"></i> Tambah User
+</button>
 
-<div class="table-responsive">
 <table class="table table-hover">
 <tr class="table-dark">
 <th>Username</th>
@@ -177,9 +187,7 @@ body{
 <i class="fa fa-edit"></i>
 </button>
 
-<a href="?hapus=<?= $d['id'] ?>" 
-class="btn btn-danger btn-sm"
-onclick="return confirm('Yakin hapus?')">
+<a href="?hapus=<?= $d['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">
 <i class="fa fa-trash"></i>
 </a>
 </td>
@@ -221,7 +229,6 @@ onclick="return confirm('Yakin hapus?')">
 <?php } ?>
 
 </table>
-</div>
 
 </div>
 </div>

@@ -2,48 +2,55 @@
 session_start();
 include '../koneksi.php';
 
-/* TAMBAH */
+/* ================= TAMBAH ================= */
 if(isset($_POST['tambah'])){
-    $jasa = $_POST['nama_jasa'];
-    $biaya = $_POST['biaya'];
+    $jasa = mysqli_real_escape_string($conn,$_POST['nama_jasa']);
+    $biaya = intval($_POST['biaya']);
 
     mysqli_query($conn,"INSERT INTO ongkir (nama_jasa,biaya)
     VALUES('$jasa','$biaya')");
-    header("location:ongkir.php");
+
+    header("Location: ongkir.php");
+    exit;
 }
 
-/* HAPUS */
+/* ================= HAPUS ================= */
 if(isset($_GET['hapus'])){
-    mysqli_query($conn,"DELETE FROM ongkir WHERE id='$_GET[id]'");
-    header("location:ongkir.php");
+    $id = intval($_GET['hapus']);
+    mysqli_query($conn,"DELETE FROM ongkir WHERE id='$id'");
+
+    header("Location: ongkir.php");
+    exit;
 }
 
-/* EDIT */
+/* ================= EDIT ================= */
 if(isset($_POST['edit'])){
-    $id = $_POST['id'];
-    $jasa = $_POST['nama_jasa'];
-    $biaya = $_POST['biaya'];
+    $id = intval($_POST['id']);
+    $jasa = mysqli_real_escape_string($conn,$_POST['nama_jasa']);
+    $biaya = intval($_POST['biaya']);
 
     mysqli_query($conn,"UPDATE ongkir SET
     nama_jasa='$jasa',
     biaya='$biaya'
     WHERE id='$id'");
 
-    header("location:ongkir.php");
+    header("Location: ongkir.php");
+    exit;
 }
 
-$data = mysqli_query($conn,"SELECT * FROM ongkir");
+/* ================= DATA ================= */
+$data = mysqli_query($conn,"SELECT * FROM ongkir ORDER BY id ASC");
 $total = mysqli_num_rows($data);
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-<title>Ongkir  </title>
+<title>Ongkir</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
 body{
@@ -57,26 +64,18 @@ body{
     height:100vh;
     position:fixed;
     background:linear-gradient(180deg,#141e30,#243b55);
-    color:white;
     padding:20px;
 }
-
-.sidebar h4{
-    text-align:center;
-    margin-bottom:30px;
-}
-
+.sidebar h4{color:white;text-align:center;}
 .sidebar a{
     display:flex;
-    align-items:center;
     gap:10px;
-    color:#ccc;
     padding:12px;
-    border-radius:12px;
+    color:#ccc;
     text-decoration:none;
-    margin-bottom:10px;
+    border-radius:12px;
+    transition:0.3s;
 }
-
 .sidebar a:hover{
     background:rgba(255,255,255,0.1);
     color:white;
@@ -85,7 +84,7 @@ body{
 /* CONTENT */
 .content{
     margin-left:270px;
-    padding:25px;
+    padding:30px;
 }
 
 /* CARD */
@@ -93,16 +92,17 @@ body{
     background:white;
     border-radius:20px;
     padding:25px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    box-shadow:0 15px 40px rgba(0,0,0,0.3);
 }
 
 /* STAT */
 .stat{
     background:linear-gradient(45deg,#00c6ff,#0072ff);
     color:white;
-    padding:15px;
+    padding:20px;
     border-radius:15px;
     margin-bottom:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
 
 /* TABLE */
@@ -111,11 +111,12 @@ body{
     color:white;
 }
 
-/* SEARCH */
-.search{
-    border-radius:20px;
-    padding:8px 15px;
-    border:1px solid #ccc;
+/* BADGE */
+.badge-ongkir{
+    background:#00c6ff;
+    color:white;
+    padding:6px 12px;
+    border-radius:12px;
 }
 
 /* BUTTON */
@@ -123,12 +124,11 @@ body{
     border-radius:20px;
 }
 
-/* BADGE */
-.badge-ongkir{
-    background:#00c6ff;
-    color:white;
-    padding:5px 10px;
-    border-radius:10px;
+/* SEARCH */
+.search{
+    border-radius:20px;
+    padding:8px 15px;
+    border:1px solid #ccc;
 }
 </style>
 
@@ -151,7 +151,6 @@ function cari(){
 <!-- SIDEBAR -->
 <div class="sidebar">
     <h4>🛒 Admin</h4>
-
     <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
     <a href="users.php"><i class="fa fa-users"></i> Data User</a>
     <a href="produk.php"><i class="fa fa-box"></i> Produk</a>
@@ -179,7 +178,8 @@ function cari(){
     </div>
 </div>
 
-<table class="table table-hover">
+<div class="table-responsive">
+<table class="table table-hover align-middle">
 <thead>
 <tr>
 <th>No</th>
@@ -190,19 +190,21 @@ function cari(){
 </thead>
 
 <tbody>
-<?php $no=1; mysqli_data_seek($data,0); while($d = mysqli_fetch_array($data)){ ?>
+<?php $no=1; while($d = mysqli_fetch_array($data)){ ?>
 <tr>
 <td><?= $no++ ?></td>
 <td><span class="badge-ongkir"><?= $d['nama_jasa'] ?></span></td>
 <td><b>Rp <?= number_format($d['biaya']) ?></b></td>
 <td>
-    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#edit<?= $d['id'] ?>">
-        <i class="fa fa-edit"></i>
-    </button>
+<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#edit<?= $d['id'] ?>">
+<i class="fa fa-edit"></i>
+</button>
 
-    <a href="?hapus=<?= $d['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus data?')">
-        <i class="fa fa-trash"></i>
-    </a>
+<a href="?hapus=<?= $d['id'] ?>" 
+class="btn btn-danger btn-sm"
+onclick="return confirm('Yakin hapus data?')">
+<i class="fa fa-trash"></i>
+</a>
 </td>
 </tr>
 
@@ -237,6 +239,7 @@ function cari(){
 <?php } ?>
 </tbody>
 </table>
+</div>
 
 </div>
 </div>
@@ -253,11 +256,8 @@ function cari(){
 </div>
 
 <div class="modal-body">
-
-<input type="text" name="nama_jasa" class="form-control mb-2" placeholder="Contoh: Maxim, Lalamove" required>
-
+<input type="text" name="nama_jasa" class="form-control mb-2" placeholder="Contoh: JNE, J&T" required>
 <input type="number" name="biaya" class="form-control" placeholder="Biaya" required>
-
 </div>
 
 <div class="modal-footer">
