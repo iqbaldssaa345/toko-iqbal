@@ -2,37 +2,46 @@
 session_start();
 include '../koneksi.php';
 
-/* TAMBAH */
+/* ================= TAMBAH ================= */
 if(isset($_POST['tambah'])){
-    $nama = $_POST['nama'];
-    $des = $_POST['deskripsi'];
-    $harga = $_POST['harga'];
+    $nama = mysqli_real_escape_string($conn,$_POST['nama']);
+    $des = mysqli_real_escape_string($conn,$_POST['deskripsi']);
+    $harga = intval($_POST['harga']);
 
-    $gambar = $_FILES['gambar']['name'];
-    $tmp = $_FILES['gambar']['tmp_name'];
-    move_uploaded_file($tmp,"../upload/".$gambar);
+    $gambar = "";
+
+    if(!empty($_FILES['gambar']['name'])){
+        $ext = pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION);
+        $gambar = uniqid().".".$ext;
+        move_uploaded_file($_FILES['gambar']['tmp_name'], "../upload/".$gambar);
+    }
 
     mysqli_query($conn,"INSERT INTO produk (nama,deskripsi,harga,gambar)
     VALUES('$nama','$des','$harga','$gambar')");
-    header("location:produk.php");
+
+    header("Location: produk.php");
+    exit;
 }
 
-/* HAPUS */
+/* ================= HAPUS ================= */
 if(isset($_GET['hapus'])){
-    mysqli_query($conn,"DELETE FROM produk WHERE id='$_GET[id]'");
-    header("location:produk.php");
+    $id = intval($_GET['hapus']);
+    mysqli_query($conn,"DELETE FROM produk WHERE id='$id'");
+    header("Location: produk.php");
+    exit;
 }
 
-/* EDIT */
+/* ================= EDIT ================= */
 if(isset($_POST['edit'])){
-    $id = $_POST['id'];
-    $nama = $_POST['nama'];
-    $des = $_POST['deskripsi'];
-    $harga = $_POST['harga'];
+    $id = intval($_POST['id']);
+    $nama = mysqli_real_escape_string($conn,$_POST['nama']);
+    $des = mysqli_real_escape_string($conn,$_POST['deskripsi']);
+    $harga = intval($_POST['harga']);
 
-    if($_FILES['gambar']['name']!=""){
-        $gambar = $_FILES['gambar']['name'];
-        move_uploaded_file($_FILES['gambar']['tmp_name'],"../upload/".$gambar);
+    if(!empty($_FILES['gambar']['name'])){
+        $ext = pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION);
+        $gambar = uniqid().".".$ext;
+        move_uploaded_file($_FILES['gambar']['tmp_name'], "../upload/".$gambar);
 
         mysqli_query($conn,"UPDATE produk SET
         nama='$nama',
@@ -40,7 +49,7 @@ if(isset($_POST['edit'])){
         harga='$harga',
         gambar='$gambar'
         WHERE id='$id'");
-    }else{
+    } else {
         mysqli_query($conn,"UPDATE produk SET
         nama='$nama',
         deskripsi='$des',
@@ -48,20 +57,22 @@ if(isset($_POST['edit'])){
         WHERE id='$id'");
     }
 
-    header("location:produk.php");
+    header("Location: produk.php");
+    exit;
 }
 
-$data = mysqli_query($conn,"SELECT * FROM produk");
+/* ================= DATA ================= */
+$data = mysqli_query($conn,"SELECT * FROM produk ORDER BY id ASC");
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-<title>Produk </title>
+<title>Produk</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
 body{
@@ -75,26 +86,21 @@ body{
     height:100vh;
     position:fixed;
     background:linear-gradient(180deg,#141e30,#243b55);
-    color:white;
     padding:20px;
 }
-
 .sidebar h4{
+    color:white;
     text-align:center;
-    margin-bottom:30px;
 }
-
 .sidebar a{
     display:flex;
-    align-items:center;
     gap:10px;
-    color:#ccc;
     padding:12px;
-    border-radius:12px;
+    color:#ccc;
     text-decoration:none;
-    margin-bottom:10px;
+    border-radius:12px;
+    transition:0.3s;
 }
-
 .sidebar a:hover{
     background:rgba(255,255,255,0.1);
     color:white;
@@ -103,7 +109,7 @@ body{
 /* CONTENT */
 .content{
     margin-left:270px;
-    padding:25px;
+    padding:30px;
 }
 
 /* CARD */
@@ -111,7 +117,7 @@ body{
     background:white;
     border-radius:20px;
     padding:25px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    box-shadow:0 15px 40px rgba(0,0,0,0.3);
 }
 
 /* IMAGE */
@@ -119,20 +125,25 @@ body{
     width:70px;
     height:70px;
     object-fit:cover;
-    border-radius:10px;
+    border-radius:12px;
 }
 
 /* TABLE */
 .table tr:hover{
-    background:#f5f5f5;
+    background:#f9f9f9;
+    transition:0.3s;
 }
 
 /* BUTTON */
 .btn{
     border-radius:20px;
 }
-</style>
 
+/* TITLE */
+.title{
+    font-weight:600;
+}
+</style>
 </head>
 
 <body>
@@ -140,7 +151,6 @@ body{
 <!-- SIDEBAR -->
 <div class="sidebar">
     <h4>🛒 Admin</h4>
-
     <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
     <a href="users.php"><i class="fa fa-users"></i> Data User</a>
     <a href="produk.php"><i class="fa fa-box"></i> Produk</a>
@@ -153,35 +163,38 @@ body{
 <div class="card-box">
 
 <div class="d-flex justify-content-between mb-3">
-    <h4>Data Produk</h4>
+    <h4 class="title">📦 Data Produk</h4>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambah">
         <i class="fa fa-plus"></i> Tambah
     </button>
 </div>
 
-<table class="table table-hover">
-<tr>
+<div class="table-responsive">
+<table class="table table-bordered align-middle">
+<tr class="table-dark text-center">
 <th>Gambar</th>
 <th>Nama</th>
-<th>Deskripsi</th>
 <th>Harga</th>
 <th>Aksi</th>
 </tr>
 
 <?php while($d = mysqli_fetch_array($data)){ ?>
 <tr>
-<td><img src="../upload/<?= $d['gambar'] ?>" class="img-produk"></td>
+<td class="text-center">
+<img src="../upload/<?= $d['gambar'] ?>" class="img-produk">
+</td>
 <td><?= $d['nama'] ?></td>
-<td><?= $d['deskripsi'] ?></td>
 <td>Rp <?= number_format($d['harga']) ?></td>
-<td>
-    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#edit<?= $d['id'] ?>">
-        <i class="fa fa-edit"></i>
-    </button>
+<td class="text-center">
+<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#edit<?= $d['id'] ?>">
+<i class="fa fa-edit"></i>
+</button>
 
-    <a href="?hapus=<?= $d['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus produk?')">
-        <i class="fa fa-trash"></i>
-    </a>
+<a href="?hapus=<?= $d['id'] ?>" 
+class="btn btn-danger btn-sm"
+onclick="return confirm('Hapus produk?')">
+<i class="fa fa-trash"></i>
+</a>
 </td>
 </tr>
 
@@ -210,7 +223,7 @@ body{
 </div>
 
 <div class="modal-footer">
-<button type="submit" name="edit" class="btn btn-success">Simpan</button>
+<button name="edit" class="btn btn-success">Simpan</button>
 </div>
 
 </form>
@@ -221,6 +234,7 @@ body{
 <?php } ?>
 
 </table>
+</div>
 
 </div>
 </div>
@@ -238,16 +252,13 @@ body{
 
 <div class="modal-body">
 <input type="text" name="nama" class="form-control mb-2" placeholder="Nama Produk" required>
-
 <textarea name="deskripsi" class="form-control mb-2" placeholder="Deskripsi"></textarea>
-
 <input type="number" name="harga" class="form-control mb-2" placeholder="Harga" required>
-
 <input type="file" name="gambar" class="form-control mb-2" required>
 </div>
 
 <div class="modal-footer">
-<button type="submit" name="tambah" class="btn btn-primary">Simpan</button>
+<button name="tambah" class="btn btn-primary">Simpan</button>
 </div>
 
 </form>
