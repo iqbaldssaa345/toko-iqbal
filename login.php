@@ -45,129 +45,190 @@ if(isset($_POST['login'])){
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>Login - Catering Ibu Iqbal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Catering Ibu Iqbal | Premium Taste</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-<script src="https://kit.fontawesome.com/4adad1b6d6.js" crossorigin="anonymous"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Poppins;
-}
+    :root {
+        --gold: #D4AF37;
+        --dark: #1A1A1D;
+        --light: #F9F6F0;
+        --white: #FFFFFF;
+    }
 
-body{
-    height:100vh;
-    background:linear-gradient(135deg,#000000cc,#000000cc),
-    url('https://i.pinimg.com/736x/d1/1d/62/d11d62838e3facfa6e3c030fa975c6d0.jpg') center/cover;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
 
-/* CARD */
-.login-box{
-    width:360px;
-    padding:40px;
-    border-radius:25px;
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(20px);
-    color:white;
-    text-align:center;
-    box-shadow:0 0 40px rgba(255,165,0,0.3);
-    animation:fade 1s ease;
-}
+    body {
+        min-height: 100vh;
+        background: linear-gradient(rgba(26, 26, 29, 0.85), rgba(26, 26, 29, 0.95)), 
+                    url('https://i.pinimg.com/736x/d1/1d/62/d11d62838e3facfa6e3c030fa975c6d0.jpg') center/cover fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
 
-/* ANIMASI */
-@keyframes fade{
-    from{opacity:0; transform:translateY(40px);}
-    to{opacity:1; transform:translateY(0);}
-}
+    /* CARD */
+    .login-box {
+        width: 100%;
+        max-width: 420px;
+        padding: 50px 40px;
+        border-radius: 12px;
+        background: rgba(26, 26, 29, 0.7);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        backdrop-filter: blur(15px);
+        color: var(--white);
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        animation: fadeUp 0.8s ease forwards;
+    }
 
-.login-box h2{
-    margin-bottom:20px;
-    font-weight:600;
-}
+    /* ANIMASI */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-/* INPUT */
-.input-box{
-    position:relative;
-    margin:20px 0;
-}
+    .logo {
+        font-size: 45px;
+        margin-bottom: 15px;
+        color: var(--gold);
+    }
 
-.input-box i{
-    position:absolute;
-    left:10px;
-    top:50%;
-    transform:translateY(-50%);
-    color:#aaa;
-}
+    .login-box h2 {
+        font-family: 'Playfair Display', serif;
+        margin-bottom: 30px;
+        font-weight: 600;
+        font-size: 28px;
+        letter-spacing: 1px;
+    }
 
-.input-box input{
-    width:100%;
-    padding:12px 40px;
-    border:none;
-    border-radius:30px;
-    outline:none;
-    background:rgba(255,255,255,0.1);
-    color:white;
-}
+    /* INPUT */
+    .input-box {
+        position: relative;
+        margin: 25px 0;
+        text-align: left;
+    }
 
-/* SHOW PASSWORD */
-.show-pass{
-    position:absolute;
-    right:10px;
-    top:50%;
-    transform:translateY(-50%);
-    cursor:pointer;
-}
+    .input-box i.fa-user, .input-box i.fa-lock {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+        font-size: 14px;
+        transition: 0.3s;
+    }
 
-/* BUTTON */
-button{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:30px;
-    background:linear-gradient(45deg,orange,red);
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
-    transition:0.3s;
-}
+    .input-box:focus-within i.fa-user,
+    .input-box:focus-within i.fa-lock {
+        color: var(--gold);
+    }
 
-button:hover{
-    transform:scale(1.05);
-    box-shadow:0 0 15px orange;
-}
+    .input-box input {
+        width: 100%;
+        padding: 14px 45px;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 8px;
+        outline: none;
+        background: rgba(0, 0, 0, 0.2);
+        color: var(--white);
+        font-size: 14px;
+        transition: 0.3s;
+    }
 
-/* ERROR */
-.error{
-    background:rgba(255,0,0,0.7);
-    padding:10px;
-    border-radius:10px;
-    margin-bottom:15px;
-}
+    .input-box input:focus {
+        border-color: var(--gold);
+        background: rgba(0, 0, 0, 0.4);
+    }
 
-/* LINK */
-.link{
-    margin-top:15px;
-}
+    /* SHOW PASSWORD */
+    .show-pass {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #888;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+    
+    .show-pass:hover {
+        color: var(--white);
+    }
 
-.link a{
-    color:#ffd;
-    text-decoration:none;
-}
+    /* BUTTON */
+    button {
+        width: 100%;
+        padding: 14px;
+        margin-top: 10px;
+        border: 1px solid var(--gold);
+        border-radius: 8px;
+        background: var(--gold);
+        color: var(--white);
+        font-weight: 500;
+        font-size: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
 
-/* TITLE ICON */
-.logo{
-    font-size:40px;
-    margin-bottom:10px;
-    color:orange;
-}
+    button:hover {
+        background: transparent;
+        color: var(--gold);
+    }
+
+    /* ERROR */
+    .error {
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+        color: #ff6b6b;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    /* LINK */
+    .link {
+        margin-top: 25px;
+        font-size: 13px;
+        color: #AAA;
+    }
+
+    .link a {
+        color: var(--gold);
+        text-decoration: none;
+        transition: 0.3s;
+        font-weight: 500;
+    }
+
+    .link a:hover {
+        color: var(--white);
+    }
+
+    .back-link {
+        margin-top: 20px;
+        display: inline-block;
+    }
 </style>
 </head>
 
@@ -179,10 +240,10 @@ button:hover{
         <i class="fas fa-utensils"></i>
     </div>
 
-    <h2>Login</h2>
+    <h2>Selamat Datang</h2>
 
     <?php if($error){ ?>
-        <div class="error"><?= $error; ?></div>
+        <div class="error"><i class="fas fa-exclamation-circle"></i> <?= $error; ?></div>
     <?php } ?>
 
     <form method="POST">
@@ -198,16 +259,16 @@ button:hover{
             <i class="fas fa-eye show-pass" onclick="togglePass()"></i>
         </div>
 
-        <button name="login">Masuk</button>
+        <button name="login">Masuk ke Akun</button>
 
     </form>
 
     <div class="link">
-        <p><a href="index.php">← Kembali ke Beranda</a></p>
+        <p>Belum memiliki akun? <a href="daftar.php">Daftar Sekarang</a></p>
     </div>
-
-    <div class="link">
-        <p>Belum punya akun? <a href="daftar.php">Daftar</a></p>
+    
+    <div class="link back-link">
+        <a href="index.php"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
     </div>
 
 </div>
@@ -215,10 +276,16 @@ button:hover{
 <script>
 function togglePass(){
     var x = document.getElementById("pass");
+    var icon = document.querySelector(".show-pass");
+    
     if(x.type === "password"){
         x.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
     } else {
         x.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
     }
 }
 </script>

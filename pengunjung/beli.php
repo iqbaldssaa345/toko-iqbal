@@ -47,6 +47,15 @@ if(isset($_POST['simpan'])){
                 total='$total'
                 WHERE id='$edit_id' AND user_id='$user_id'
             ");
+            
+            $subtotal = $produk['harga'] * $jumlah;
+            $cek_dp = mysqli_query($conn,"SELECT * FROM detail_pesanan WHERE pesanan_id='$edit_id' AND produk_id='$id'");
+            if(mysqli_num_rows($cek_dp) > 0){
+                mysqli_query($conn,"UPDATE detail_pesanan SET jumlah='$jumlah', subtotal='$subtotal' WHERE pesanan_id='$edit_id' AND produk_id='$id'");
+            } else {
+                mysqli_query($conn,"INSERT INTO detail_pesanan (pesanan_id, produk_id, jumlah, subtotal) VALUES ('$edit_id', '$id', '$jumlah', '$subtotal')");
+            }
+            
             header("location:beli.php?id=$id&pesan=sukses_edit");
             exit;
         } 
@@ -56,6 +65,10 @@ if(isset($_POST['simpan'])){
             (user_id, alamat_id, ongkir_id, total)
             VALUES
             ('$user_id','$alamat_id','$ongkir_id','$total')");
+            $pesanan_id = mysqli_insert_id($conn);
+            
+            $subtotal = $produk['harga'] * $jumlah;
+            mysqli_query($conn,"INSERT INTO detail_pesanan (pesanan_id, produk_id, jumlah, subtotal) VALUES ('$pesanan_id', '$id', '$jumlah', '$subtotal')");
 
             header("location:beli.php?id=$id&pesan=sukses_tambah");
             exit;
@@ -68,6 +81,9 @@ if(isset($_POST['simpan'])){
 ========================= */
 if(isset($_GET['hapus'])){
     $hapus = intval($_GET['hapus']);
+    // hapus detail dan pembayaran agar tidak terjadi error foreign key
+    mysqli_query($conn,"DELETE FROM detail_pesanan WHERE pesanan_id='$hapus'");
+    mysqli_query($conn,"DELETE FROM pembayaran WHERE pesanan_id='$hapus'");
     mysqli_query($conn,"DELETE FROM pesanan WHERE id='$hapus' AND user_id='$user_id'");
     header("location:beli.php?id=$id&pesan=sukses_hapus");
     exit;
@@ -79,19 +95,26 @@ if(isset($_GET['hapus'])){
 $edit_data = null;
 if(isset($_GET['edit'])){
     $edit_id = intval($_GET['edit']);
-    $edit_data = mysqli_fetch_array(mysqli_query($conn,"SELECT * FROM pesanan WHERE id='$edit_id' AND user_id='$user_id'"));
+    $edit_data = mysqli_fetch_array(mysqli_query($conn,"
+        SELECT p.*, dp.jumlah 
+        FROM pesanan p
+        LEFT JOIN detail_pesanan dp ON p.id = dp.pesanan_id
+        WHERE p.id='$edit_id' AND p.user_id='$user_id'
+    "));
 }
 
 /* =========================
    DATA LIST
 ========================= */
 $data = mysqli_query($conn,"
-SELECT p.*, a.nama_penerima, a.kota, o.nama_jasa, o.biaya 
+SELECT p.*, a.nama_penerima, a.kota, o.nama_jasa, o.biaya, dp.jumlah, pr.nama as nama_produk 
 FROM pesanan p
 LEFT JOIN alamat a ON p.alamat_id = a.id
 LEFT JOIN ongkir o ON p.ongkir_id = o.id
+LEFT JOIN detail_pesanan dp ON p.id = dp.pesanan_id
+LEFT JOIN produk pr ON dp.produk_id = pr.id
 WHERE p.user_id='$user_id'
-ORDER BY p.id ASC
+ORDER BY p.id DESC
 ");
 ?>
 
@@ -179,7 +202,7 @@ body{
 <input type="hidden" name="edit_id" value="<?= $edit_data ? $edit_data['id'] : 0 ?>">
 
 <input type="number" name="jumlah" class="form-control mb-3"
-value="<?= $edit_data ? 1 : '' ?>" placeholder="Jumlah" required>
+value="<?= $edit_data && isset($edit_data['jumlah']) ? $edit_data['jumlah'] : '' ?>" placeholder="Jumlah" required>
 
 <!-- ALAMAT -->
 <select name="alamat_id" class="form-control mb-3" required>
@@ -216,6 +239,8 @@ value="<?= $edit_data ? 1 : '' ?>" placeholder="Jumlah" required>
 
 <table class="table table-hover mt-3">
 <tr class="table-dark">
+<th>Produk</th>
+<th>Jumlah</th>
 <th>Alamat</th>
 <th>Ongkir</th>
 <th>Total</th>
@@ -225,6 +250,8 @@ value="<?= $edit_data ? 1 : '' ?>" placeholder="Jumlah" required>
 <?php if(mysqli_num_rows($data) > 0){ ?>
 <?php while($d=mysqli_fetch_array($data)){ ?>
 <tr>
+<td><?= $d['nama_produk'] ? $d['nama_produk'] : '-' ?></td>
+<td><?= $d['jumlah'] ? $d['jumlah'] : '-' ?></td>
 <td><?= $d['nama_penerima'] ?> (<?= $d['kota'] ?>)</td>
 <td><?= $d['nama_jasa'] ?> (Rp <?= number_format($d['biaya']) ?>)</td>
 <td class="text-success fw-bold">Rp <?= number_format($d['total']) ?></td>
@@ -242,7 +269,7 @@ value="<?= $edit_data ? 1 : '' ?>" placeholder="Jumlah" required>
 </tr>
 <?php } ?>
 <?php } else { ?>
-<tr><td colspan="4" class="text-center">Belum ada pesanan</td></tr>
+<tr><td colspan="6" class="text-center">Belum ada pesanan</td></tr>
 <?php } ?>
 
 </table>
