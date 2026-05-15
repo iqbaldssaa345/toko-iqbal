@@ -47,7 +47,8 @@ if(isset($_POST['simpan'])){
                 total='$total'
                 WHERE id='$edit_id' AND user_id='$user_id'
             ");
-            echo "<script>alert('Pesanan berhasil diupdate');location='beli.php?id=$id';</script>";
+            header("location:beli.php?id=$id&pesan=sukses_edit");
+            exit;
         } 
         /* INSERT */
         else{
@@ -56,7 +57,8 @@ if(isset($_POST['simpan'])){
             VALUES
             ('$user_id','$alamat_id','$ongkir_id','$total')");
 
-            echo "<script>alert('Pesanan berhasil');location='beli.php?id=$id';</script>";
+            header("location:beli.php?id=$id&pesan=sukses_tambah");
+            exit;
         }
     }
 }
@@ -67,7 +69,8 @@ if(isset($_POST['simpan'])){
 if(isset($_GET['hapus'])){
     $hapus = intval($_GET['hapus']);
     mysqli_query($conn,"DELETE FROM pesanan WHERE id='$hapus' AND user_id='$user_id'");
-    echo "<script>location='beli.php?id=$id';</script>";
+    header("location:beli.php?id=$id&pesan=sukses_hapus");
+    exit;
 }
 
 /* =========================
@@ -231,11 +234,9 @@ value="<?= $edit_data ? 1 : '' ?>" placeholder="Jumlah" required>
 <i class="fa fa-edit"></i>
 </a>
 
-<a href="?id=<?= $id ?>&hapus=<?= $d['id'] ?>" 
-onclick="return confirm('Yakin hapus?')"
-class="btn btn-danger btn-sm">
+<button type="button" class="btn btn-danger btn-sm" onclick="konfirmasiHapus('?id=<?= $id ?>&hapus=<?= $d['id'] ?>')">
 <i class="fa fa-trash"></i>
-</a>
+</button>
 
 </td>
 </tr>
@@ -249,6 +250,38 @@ class="btn btn-danger btn-sm">
 
 </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function konfirmasiHapus(url) {
+    Swal.fire({
+        title: 'Yakin hapus data ini?',
+        text: "Data yang dihapus tidak bisa dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = url;
+        }
+    })
+}
+</script>
+<?php if(isset($_GET['pesan'])){ ?>
+<script>
+    <?php if($_GET['pesan'] == 'sukses_tambah'){ ?>
+        Swal.fire('Berhasil!', 'Data berhasil ditambahkan.', 'success');
+    <?php }elseif($_GET['pesan'] == 'sukses_edit'){ ?>
+        Swal.fire('Berhasil!', 'Data berhasil diperbarui.', 'success');
+    <?php }elseif($_GET['pesan'] == 'sukses_hapus'){ ?>
+        Swal.fire('Berhasil!', 'Data berhasil dihapus.', 'success');
+    <?php } ?>
+</script>
+<?php } ?>
 
 </body>
 </html>

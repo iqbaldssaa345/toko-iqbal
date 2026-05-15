@@ -12,7 +12,8 @@ if(isset($_POST['daftar'])){
     if(mysqli_num_rows($cek) > 0){
         $notif = "<div class='error'>Username sudah digunakan!</div>";
     } else {
-        mysqli_query($conn,"INSERT INTO users (username,password,role) VALUES ('$username','$password','pengunjung')");
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        mysqli_query($conn,"INSERT INTO users (username,password,role) VALUES ('$username','$hashed_password','pengunjung')");
         $notif = "<div class='success'>Berhasil daftar! <a href='login.php'>Login sekarang</a></div>";
     }
 }

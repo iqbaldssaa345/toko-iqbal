@@ -8,22 +8,35 @@ if(isset($_POST['login'])){
     $user = $_POST['username'];
     $pass = $_POST['password'];
 
-    $data = mysqli_query($conn,"SELECT * FROM users WHERE username='$user' AND password='$pass'");
+    $data = mysqli_query($conn,"SELECT * FROM users WHERE username='$user'");
     $cek = mysqli_num_rows($data);
 
     if($cek > 0){
         $d = mysqli_fetch_assoc($data);
+        
+        // Memeriksa password yang di-hash atau password plaintext lama
+        if(password_verify($pass, $d['password']) || $d['password'] === $pass) {
+            
+            // Jika password masih plaintext, lakukan pembaruan menjadi hash
+            if($d['password'] === $pass) {
+                $new_hash = password_hash($pass, PASSWORD_DEFAULT);
+                $id_user = $d['id'];
+                mysqli_query($conn, "UPDATE users SET password='$new_hash' WHERE id='$id_user'");
+            }
 
-        $_SESSION['login'] = true;
-        $_SESSION['role'] = $d['role'];
-        $_SESSION['id'] = $d['id'];
+            $_SESSION['login'] = true;
+            $_SESSION['role'] = $d['role'];
+            $_SESSION['id'] = $d['id'];
 
-        if($d['role']=="admin"){
-            header("location:admin/index.php");
-        }elseif($d['role']=="petugas"){
-            header("location:petugas/index.php");
+            if($d['role']=="admin"){
+                header("location:admin/index.php");
+            }elseif($d['role']=="petugas"){
+                header("location:petugas/index.php");
+            }else{
+                header("location:pengunjung/index.php");
+            }
         }else{
-            header("location:pengunjung/index.php");
+            $error = "Username atau Password salah!";
         }
     }else{
         $error = "Username atau Password salah!";

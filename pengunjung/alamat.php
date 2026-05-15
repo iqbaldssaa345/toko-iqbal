@@ -19,14 +19,16 @@ if(isset($_POST['tambah'])){
         VALUES('$user_id','$nama','$alamat','$kota')");
     }
 
-    echo "<script>location='alamat.php';</script>";
+    header("location:alamat.php?pesan=sukses_tambah");
+    exit;
 }
 
 /* HAPUS */
 if(isset($_GET['hapus'])){
     $id = intval($_GET['hapus']);
     mysqli_query($conn,"DELETE FROM alamat WHERE id='$id' AND user_id='$user_id'");
-    echo "<script>location='alamat.php';</script>";
+    header("location:alamat.php?pesan=sukses_hapus");
+    exit;
 }
 
 $data = mysqli_query($conn,"SELECT * FROM alamat WHERE user_id='$user_id' ORDER BY id ASC");
@@ -176,11 +178,9 @@ body{
 <?php while($d=mysqli_fetch_array($data)){ ?>
 <div class="alamat-box">
 
-<a href="?hapus=<?= $d['id'] ?>" 
-   class="btn btn-danger btn-sm btn-hapus"
-   onclick="return confirm('Yakin hapus alamat ini?')">
+<button type="button" class="btn btn-danger btn-sm btn-hapus" onclick="konfirmasiHapus('?hapus=<?= $d['id'] ?>')">
 <i class="fa fa-trash"></i>
-</a>
+</button>
 
 <div class="icon"><i class="fa fa-map-pin"></i></div>
 
@@ -195,6 +195,38 @@ body{
 </div>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function konfirmasiHapus(url) {
+    Swal.fire({
+        title: 'Yakin hapus alamat ini?',
+        text: "Alamat yang dihapus tidak bisa dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = url;
+        }
+    })
+}
+</script>
+<?php if(isset($_GET['pesan'])){ ?>
+<script>
+    <?php if($_GET['pesan'] == 'sukses_tambah'){ ?>
+        Swal.fire('Berhasil!', 'Alamat berhasil ditambahkan.', 'success');
+    <?php }elseif($_GET['pesan'] == 'sukses_edit'){ ?>
+        Swal.fire('Berhasil!', 'Alamat berhasil diperbarui.', 'success');
+    <?php }elseif($_GET['pesan'] == 'sukses_hapus'){ ?>
+        Swal.fire('Berhasil!', 'Alamat berhasil dihapus.', 'success');
+    <?php } ?>
+</script>
+<?php } ?>
 
 </body>
 </html>

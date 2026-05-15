@@ -16,7 +16,8 @@ if(isset($_POST['tambah'])){
     mysqli_query($conn,"INSERT INTO alamat (user_id,nama_penerima,alamat,kota)
     VALUES('$user_id','$nama_penerima','$alamat','$kota')");
 
-    echo "<script>alert('Data berhasil ditambah');location='alamat.php';</script>";
+    header("location:alamat.php?pesan=sukses_tambah");
+    exit;
 }
 
 /* ================= HAPUS ================= */
@@ -25,7 +26,8 @@ if(isset($_GET['hapus'])){
 
     mysqli_query($conn,"DELETE FROM alamat WHERE id='$id'");
 
-    echo "<script>alert('Data berhasil dihapus');location='alamat.php';</script>";
+    header("location:alamat.php?pesan=sukses_hapus");
+    exit;
 }
 
 /* ================= EDIT ================= */
@@ -44,7 +46,8 @@ if(isset($_POST['edit'])){
         WHERE id='$id'
     ");
 
-    echo "<script>alert('Data berhasil diupdate');location='alamat.php';</script>";
+    header("location:alamat.php?pesan=sukses_edit");
+    exit;
 }
 
 /* ================= DATA ================= */
@@ -158,11 +161,9 @@ body{
 <i class="fa fa-edit"></i>
 </button>
 
-<a href="?hapus=<?= $d['id'] ?>" 
-   class="btn btn-danger btn-sm"
-   onclick="return confirm('Yakin hapus?')">
+<button type="button" class="btn btn-danger btn-sm" onclick="konfirmasiHapus('?hapus=<?= $d['id'] ?>')">
 <i class="fa fa-trash"></i>
-</a>
+</button>
 </td>
 </tr>
 
@@ -237,6 +238,36 @@ body{
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function konfirmasiHapus(url) {
+    Swal.fire({
+        title: 'Yakin hapus data ini?',
+        text: "Data yang dihapus tidak bisa dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = url;
+        }
+    })
+}
+</script>
+<?php if(isset($_GET['pesan'])){ ?>
+<script>
+    <?php if($_GET['pesan'] == 'sukses_tambah'){ ?>
+        Swal.fire('Berhasil!', 'Data berhasil ditambahkan.', 'success');
+    <?php }elseif($_GET['pesan'] == 'sukses_edit'){ ?>
+        Swal.fire('Berhasil!', 'Data berhasil diperbarui.', 'success');
+    <?php }elseif($_GET['pesan'] == 'sukses_hapus'){ ?>
+        Swal.fire('Berhasil!', 'Data berhasil dihapus.', 'success');
+    <?php } ?>
+</script>
+<?php } ?>
 
 </body>
 </html>
