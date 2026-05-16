@@ -60,73 +60,288 @@ if(isset($_GET['cari'])){
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>Data User</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data User - Admin</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
-body{
-    background:linear-gradient(135deg,#1d2671,#c33764);
-    font-family:'Poppins',sans-serif;
+:root {
+    --bg-gradient: linear-gradient(135deg,#1d2671,#c33764);
+    --sidebar-bg: linear-gradient(180deg,#141e30,#243b55);
+    --badge-admin: #ff4d4d;
+    --badge-petugas: #ff9800;
+    --badge-pengunjung: #4caf50;
 }
 
-.sidebar{
-    width:250px;
-    height:100vh;
-    position:fixed;
-    background:linear-gradient(180deg,#141e30,#243b55);
-    padding:20px;
-}
-.sidebar h4{color:white;text-align:center;}
-.sidebar a{
-    display:flex;
-    gap:10px;
-    padding:12px;
-    color:#ccc;
-    text-decoration:none;
-    border-radius:12px;
-}
-.sidebar a:hover{
-    background:rgba(255,255,255,0.1);
-    color:white;
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-.content{
-    margin-left:270px;
-    padding:30px;
+/* SIDEBAR */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    background: var(--sidebar-bg);
+    color: white;
+    padding: 30px 20px;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
 }
 
-.topbar{
-    background:white;
-    padding:15px 20px;
-    border-radius:15px;
-    margin-bottom:20px;
-    box-shadow:0 5px 20px rgba(0,0,0,0.2);
+.sidebar h4 {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 40px;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 20px;
 }
 
-.card-box{
-    background:white;
-    border-radius:20px;
-    padding:25px;
-    box-shadow:0 15px 40px rgba(0,0,0,0.3);
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: rgba(255,255,255,0.7);
+    padding: 14px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    margin-bottom: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
-.badge-role{
-    padding:6px 12px;
-    border-radius:20px;
-    color:white;
-    font-size:12px;
+.sidebar a i {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
 }
-.admin{background:#ff4d4d;}
-.petugas{background:#ff9800;}
-.pengunjung{background:#4caf50;}
 
-.btn{border-radius:20px;}
-input{border-radius:20px;}
+.sidebar a:hover, .sidebar a.active {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    transform: translateX(8px);
+}
+
+.sidebar a.active {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-left: 4px solid #fff;
+}
+
+/* CONTENT AREA */
+.main-content {
+    margin-left: 260px;
+    padding: 30px 40px;
+}
+
+/* TOPBAR */
+.topbar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 18px 30px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+.topbar h5 {
+    margin: 0;
+    font-weight: 600;
+    color: #243b55;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* SEARCH FORM */
+.search-form {
+    display: flex;
+    gap: 10px;
+}
+
+.search-form input {
+    border-radius: 30px;
+    padding: 10px 20px;
+    border: 1px solid #e0e0e0;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+    transition: all 0.3s ease;
+}
+
+.search-form input:focus {
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-color: #141e30;
+}
+
+.search-form button {
+    border-radius: 30px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* CARD BOX */
+.card-box {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+/* BADGES */
+.badge-role {
+    padding: 6px 16px;
+    border-radius: 30px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.admin { background: var(--badge-admin); }
+.petugas { background: var(--badge-petugas); }
+.pengunjung { background: var(--badge-pengunjung); }
+
+/* TABLE */
+.table-responsive::-webkit-scrollbar {
+    display: none;
+}
+.table-responsive {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.table {
+    margin-top: 15px;
+    vertical-align: middle;
+}
+
+.table th {
+    background: #141e30;
+    color: white;
+    font-weight: 500;
+    border: none;
+    padding: 15px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.table th:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+.table th:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+
+.table td {
+    padding: 15px;
+    color: #495057;
+    font-weight: 500;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.005);
+}
+
+/* BUTTONS */
+.btn-rounded {
+    border-radius: 30px;
+    padding: 10px 24px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-rounded:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.btn-action {
+    border-radius: 10px;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    transition: all 0.2s ease;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* MODALS */
+.modal-content {
+    border-radius: 20px;
+    border: none;
+    overflow: hidden;
+}
+
+.modal-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #eef2f7;
+    padding: 20px 25px;
+}
+
+.modal-header h5 {
+    font-weight: 600;
+    color: #141e30;
+    margin: 0;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.modal-body input, .modal-body select {
+    border-radius: 12px;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 15px 25px 25px;
+}
+
+.modal-footer .btn {
+    border-radius: 30px;
+    padding: 10px 25px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 991px) {
+    .sidebar { width: 80px; padding: 20px 10px; }
+    .sidebar h4, .sidebar a span { display: none; }
+    .sidebar a { justify-content: center; padding: 15px; }
+    .main-content { margin-left: 80px; padding: 20px; }
+}
 </style>
 </head>
 
@@ -134,143 +349,168 @@ input{border-radius:20px;}
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-    <h4>🛒 Admin</h4>
+    <h4><i class="fa fa-utensils me-2"></i> Admin</h4>
 
-    <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
-    <a href="users.php"><i class="fa fa-users"></i> Data User</a>
-    <a href="produk.php"><i class="fa fa-box"></i> Produk</a>
-    <a href="ongkir.php"><i class="fa fa-truck"></i> Ongkir</a>
-    <a href="../logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a>
+    <a href="index.php"><i class="fa fa-home"></i> <span>Dashboard</span></a>
+    <a href="users.php" class="active"><i class="fa fa-users"></i> <span>Data User</span></a>
+    <a href="produk.php"><i class="fa fa-box"></i> <span>Produk</span></a>
+    <a href="ongkir.php"><i class="fa fa-truck"></i> <span>Ongkir</span></a>
+    <a href="../logout.php" class="mt-auto mb-2"><i class="fa fa-sign-out-alt"></i> <span>Logout</span></a>
 </div>
 
+<!-- MAIN CONTENT -->
+<div class="main-content">
 
-<div class="content">
+    <!-- TOPBAR + SEARCH -->
+    <div class="topbar">
+        <h5><i class="fa fa-users text-primary"></i> Data User</h5>
 
-<!-- TOPBAR + SEARCH -->
-<div class="topbar d-flex justify-content-between align-items-center">
-    <h5>👥 Data User</h5>
+        <form method="GET" class="search-form">
+            <input type="text" name="cari" class="form-control"
+            placeholder="Cari username / role..."
+            value="<?= htmlspecialchars($keyword) ?>">
 
-    <form method="GET" class="d-flex gap-2">
-        <input type="text" name="cari" class="form-control"
-        placeholder="Cari username / role..."
-        value="<?= $keyword ?>">
+            <button class="btn btn-dark">
+                <i class="fa fa-search"></i>
+            </button>
+        </form>
+    </div>
 
-        <button class="btn btn-dark">
-            <i class="fa fa-search"></i>
+    <!-- CARD BOX -->
+    <div class="card-box">
+
+        <button class="btn btn-primary btn-rounded mb-4" data-bs-toggle="modal" data-bs-target="#tambah">
+            <i class="fa fa-plus"></i> Tambah User Baru
         </button>
-    </form>
-</div>
 
-<div class="card-box">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    $modals = "";
+                    while($d = mysqli_fetch_array($data)){ 
+                    ?>
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-light p-2 rounded-circle text-secondary d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                                <?= htmlspecialchars($d['username']) ?>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge-role <?= $d['role'] ?>">
+                                <?= strtoupper($d['role']) ?>
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-warning text-white btn-action" data-bs-toggle="modal" data-bs-target="#edit<?= $d['id'] ?>" title="Edit">
+                                <i class="fa fa-edit"></i>
+                            </button>
 
-<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#tambah">
-    <i class="fa fa-plus"></i> Tambah User
-</button>
+                            <button type="button" class="btn btn-danger btn-action" onclick="konfirmasiHapus('?hapus=<?= $d['id'] ?>')" title="Hapus">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
 
-<table class="table table-hover">
-<tr class="table-dark">
-<th>Username</th>
-<th>Role</th>
-<th>Aksi</th>
-</tr>
+                    <?php ob_start(); ?>
+                    <!-- MODAL EDIT -->
+                    <div class="modal fade" id="edit<?= $d['id'] ?>">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="POST">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="fa fa-user-edit me-2 text-warning"></i> Edit User</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" name="id" value="<?= $d['id'] ?>">
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold text-secondary small">Username</label>
+                                            <input type="text" name="username" class="form-control" value="<?= htmlspecialchars($d['username']) ?>" required>
+                                        </div>
 
-<?php 
-$modals = "";
-while($d = mysqli_fetch_array($data)){ 
-?>
-<tr>
-<td><?= $d['username'] ?></td>
-<td>
-<span class="badge-role <?= $d['role'] ?>">
-<?= strtoupper($d['role']) ?>
-</span>
-</td>
-<td>
-<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#edit<?= $d['id'] ?>">
-<i class="fa fa-edit"></i>
-</button>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold text-secondary small">Password Baru</label>
+                                            <input type="password" name="password" class="form-control" placeholder="Kosongkan jika tidak diubah">
+                                        </div>
 
-<button type="button" class="btn btn-danger btn-sm" onclick="konfirmasiHapus('?hapus=<?= $d['id'] ?>')">
-<i class="fa fa-trash"></i>
-</button>
-</td>
-</tr>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold text-secondary small">Role Pengguna</label>
+                                            <select name="role" class="form-select" style="border-radius:12px; padding:12px 15px; border:1px solid #e0e0e0;">
+                                                <option value="admin" <?= $d['role']=="admin"?"selected":"" ?>>Admin</option>
+                                                <option value="petugas" <?= $d['role']=="petugas"?"selected":"" ?>>Petugas</option>
+                                                <option value="pengunjung" <?= $d['role']=="pengunjung"?"selected":"" ?>>Pengunjung</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                                        <button name="edit" class="btn btn-success"><i class="fa fa-save me-1"></i> Simpan</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <?php 
+                    $modals .= ob_get_clean();
+                    } 
+                    ?>
+                </tbody>
+            </table>
+        </div>
 
-<?php ob_start(); ?>
-<!-- MODAL EDIT -->
-<div class="modal fade" id="edit<?= $d['id'] ?>">
-<div class="modal-dialog">
-<div class="modal-content">
-<form method="POST">
+        <?= $modals ?>
 
-<div class="modal-header">
-<h5>Edit User</h5>
-</div>
-
-<div class="modal-body">
-<input type="hidden" name="id" value="<?= $d['id'] ?>">
-
-<input type="text" name="username" class="form-control mb-2" value="<?= $d['username'] ?>" required>
-
-<input type="password" name="password" class="form-control mb-2" placeholder="Kosongkan jika tidak diubah">
-
-<select name="role" class="form-control">
-<option value="admin" <?= $d['role']=="admin"?"selected":"" ?>>admin</option>
-<option value="petugas" <?= $d['role']=="petugas"?"selected":"" ?>>petugas</option>
-<option value="pengunjung" <?= $d['role']=="pengunjung"?"selected":"" ?>>pengunjung</option>
-</select>
-</div>
-
-<div class="modal-footer">
-<button name="edit" class="btn btn-success">Simpan</button>
-</div>
-
-</form>
-</div>
-</div>
-</div>
-<?php 
-$modals .= ob_get_clean();
-} 
-?>
-
-</table>
-
-<?= $modals ?>
-
-</div>
+    </div>
 </div>
 
 <!-- MODAL TAMBAH -->
 <div class="modal fade" id="tambah">
-<div class="modal-dialog">
-<div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa fa-user-plus me-2 text-primary"></i> Tambah User Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary small">Username</label>
+                        <input type="text" name="username" class="form-control" placeholder="Masukkan username" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary small">Password</label>
+                        <input type="password" name="password" class="form-control" placeholder="Masukkan password" required>
+                    </div>
 
-<form method="POST">
-
-<div class="modal-header">
-<h5>Tambah User</h5>
-</div>
-
-<div class="modal-body">
-<input type="text" name="username" class="form-control mb-2" placeholder="Username" required>
-<input type="password" name="password" class="form-control mb-2" placeholder="Password" required>
-
-<select name="role" class="form-control">
-<option value="admin">admin</option>
-<option value="petugas">petugas</option>
-<option value="pengunjung">pengunjung</option>
-</select>
-</div>
-
-<div class="modal-footer">
-<button name="tambah" class="btn btn-primary">Simpan</button>
-</div>
-
-</form>
-
-</div>
-</div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary small">Role Pengguna</label>
+                        <select name="role" class="form-select" style="border-radius:12px; padding:12px 15px; border:1px solid #e0e0e0;">
+                            <option value="admin">Admin</option>
+                            <option value="petugas">Petugas</option>
+                            <option value="pengunjung">Pengunjung</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                    <button name="tambah" class="btn btn-primary"><i class="fa fa-save me-1"></i> Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
