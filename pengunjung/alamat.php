@@ -7,6 +7,9 @@ if(!isset($_SESSION['role']) || $_SESSION['role']!="pengunjung"){
 include '../koneksi.php';
 
 $user_id = $_SESSION['id'];
+$q_pengunjung = mysqli_query($conn, "SELECT username FROM users WHERE id='$user_id'");
+$d_pengunjung = mysqli_fetch_assoc($q_pengunjung);
+$nama_pengunjung = $d_pengunjung['username'];
 
 /* TAMBAH */
 if(isset($_POST['tambah'])){
@@ -316,7 +319,7 @@ body {
     <div class="topbar">
         <h5><i class="fa fa-map-marker-alt me-2 text-primary"></i> Kelola Alamat</h5>
         <div class="user-profile">
-            <i class="fa fa-user-circle"></i> <?= htmlspecialchars($_SESSION['username'] ?? 'User') ?>
+            <i class="fa fa-user-circle"></i> <?= htmlspecialchars($nama_pengunjung) ?>
         </div>
     </div>
 

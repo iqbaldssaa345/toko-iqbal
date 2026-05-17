@@ -5,6 +5,12 @@ if($_SESSION['role']!="petugas"){
 }
 include '../koneksi.php';
 
+// Data Petugas
+$id_petugas = $_SESSION['id'];
+$q_petugas = mysqli_query($conn, "SELECT username FROM users WHERE id='$id_petugas'");
+$d_petugas = mysqli_fetch_assoc($q_petugas);
+$nama_petugas = $d_petugas['username'];
+
 /* ================= TAMBAH ================= */
 if(isset($_POST['tambah'])){
     $user_id   = intval($_POST['user_id']);
@@ -337,7 +343,7 @@ body {
     <div class="topbar">
         <h5><i class="fa fa-receipt me-2 text-primary"></i> Data Pesanan</h5>
         <div class="user-profile">
-            <i class="fa fa-user-circle"></i> Petugas
+            <i class="fa fa-user-circle"></i> <?= htmlspecialchars($nama_petugas) ?>
         </div>
     </div>
 

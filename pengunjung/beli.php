@@ -7,6 +7,10 @@ if(!isset($_SESSION['id'])){
 }
 
 $user_id = $_SESSION['id'];
+$q_pengunjung = mysqli_query($conn, "SELECT username FROM users WHERE id='$user_id'");
+$d_pengunjung = mysqli_fetch_assoc($q_pengunjung);
+$nama_pengunjung = $d_pengunjung['username'];
+
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 /* PRODUK */
@@ -390,7 +394,7 @@ body {
     <div class="topbar">
         <h5><i class="fa fa-shopping-bag me-2 text-primary"></i> Proses Pemesanan</h5>
         <div class="user-profile">
-            <i class="fa fa-user-circle"></i> <?= htmlspecialchars($_SESSION['username'] ?? 'User') ?>
+            <i class="fa fa-user-circle"></i> <?= htmlspecialchars($nama_pengunjung) ?>
         </div>
     </div>
 

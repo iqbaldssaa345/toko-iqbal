@@ -5,6 +5,12 @@ if(!isset($_SESSION['role']) || $_SESSION['role']!="pengunjung"){
     exit;
 }
 include '../koneksi.php';
+
+// Data Pengunjung
+$id_pengunjung = $_SESSION['id'];
+$q_pengunjung = mysqli_query($conn, "SELECT username FROM users WHERE id='$id_pengunjung'");
+$d_pengunjung = mysqli_fetch_assoc($q_pengunjung);
+$nama_pengunjung = $d_pengunjung['username'];
 ?>
 
 <!DOCTYPE html>
@@ -267,7 +273,7 @@ body {
     <div class="topbar">
         <h5><i class="fa fa-th-large me-2 text-primary"></i> Menu Utama</h5>
         <div class="user-profile">
-            <i class="fa fa-user-circle"></i> <?= htmlspecialchars($_SESSION['username'] ?? 'User') ?>
+            <i class="fa fa-user-circle"></i> <?= htmlspecialchars($nama_pengunjung) ?>
         </div>
     </div>
 

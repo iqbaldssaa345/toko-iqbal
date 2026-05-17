@@ -5,6 +5,12 @@ if($_SESSION['role']!="admin"){
 }
 include '../koneksi.php';
 
+// Data Admin
+$id_admin = $_SESSION['id'];
+$q_admin = mysqli_query($conn, "SELECT username FROM users WHERE id='$id_admin'");
+$d_admin = mysqli_fetch_assoc($q_admin);
+$nama_admin = $d_admin['username'];
+
 // STATISTIK
 $user = mysqli_num_rows(mysqli_query($conn,"SELECT * FROM users"));
 $produk = mysqli_num_rows(mysqli_query($conn,"SELECT * FROM produk"));
@@ -333,7 +339,7 @@ body {
     <div class="topbar">
         <h5><i class="fa fa-chart-pie me-2 text-primary"></i> Dashboard Admin</h5>
         <div class="user-profile">
-            <i class="fa fa-user-circle"></i> Admin
+            <i class="fa fa-user-circle"></i> <?= htmlspecialchars($nama_admin) ?>
         </div>
     </div>
 
