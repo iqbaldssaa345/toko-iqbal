@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 25, 2026 at 07:30 AM
+-- Generation Time: Jun 09, 2026 at 12:43 AM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -41,12 +41,7 @@ CREATE TABLE `alamat` (
 --
 
 INSERT INTO `alamat` (`id`, `user_id`, `nama_penerima`, `alamat`, `kota`) VALUES
-(1, 3, 'Iqbal', 'Jl. Jakarta No 1', 'Jakarta'),
-(4, 4, 'Iqbal', 'terate', 'jakarta'),
-(6, 3, 'yusuf', 'cikini', 'jakarta utara'),
-(8, 4, 'iqbal', 'PURI NIRWANA 1\r\n', 'bogor'),
-(9, 4, 'rusdi', 'ciremai', 'kuningan'),
-(10, 8, 'hendro', 'jalan ciremai', 'kota bogor');
+(3, 3, 'iqbal', 'puri nirwana  1 ', 'cibinong');
 
 -- --------------------------------------------------------
 
@@ -67,10 +62,7 @@ CREATE TABLE `detail_pesanan` (
 --
 
 INSERT INTO `detail_pesanan` (`id`, `pesanan_id`, `produk_id`, `jumlah`, `subtotal`) VALUES
-(1, 1, 1, 1, 15000),
-(7, 5, 1, 1, 26000),
-(8, 27, 1, 3, 78000),
-(9, 29, 1, 3, 78000);
+(8, 10, 2, 1, 12000);
 
 -- --------------------------------------------------------
 
@@ -80,7 +72,7 @@ INSERT INTO `detail_pesanan` (`id`, `pesanan_id`, `produk_id`, `jumlah`, `subtot
 
 CREATE TABLE `ongkir` (
   `id` int(11) NOT NULL,
-  `nama_jasa` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `nama_jasa` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `biaya` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -91,10 +83,8 @@ CREATE TABLE `ongkir` (
 INSERT INTO `ongkir` (`id`, `nama_jasa`, `biaya`) VALUES
 (1, 'GoFood', 5000),
 (2, 'GrabFood', 6000),
-(3, 'ShopeeFood', 14000),
-(4, 'JNT ', 15000),
-(5, 'jne', 12000),
-(6, 'lalamove', 14000);
+(4, 'jne', 7000),
+(6, 'antareja', 10000);
 
 -- --------------------------------------------------------
 
@@ -114,14 +104,8 @@ CREATE TABLE `pembayaran` (
 --
 
 INSERT INTO `pembayaran` (`id`, `pesanan_id`, `metode`, `status`) VALUES
-(1, 1, 'Transfer', 'lunas'),
-(14, 5, 'COD', 'lunas'),
-(15, 22, 'COD', 'lunas'),
-(16, 23, 'E-Wallet', 'lunas'),
-(17, 1, 'COD', 'lunas'),
-(18, 25, 'COD', 'lunas'),
-(19, 26, 'E-Wallet', 'lunas'),
-(20, 28, 'COD', 'pending');
+(9, 8, 'COD', 'lunas'),
+(10, 8, 'E-Wallet', 'lunas');
 
 -- --------------------------------------------------------
 
@@ -143,20 +127,8 @@ CREATE TABLE `pesanan` (
 --
 
 INSERT INTO `pesanan` (`id`, `user_id`, `alamat_id`, `ongkir_id`, `tanggal`, `total`) VALUES
-(1, 3, 1, 1, '2026-04-21 10:11:28', 23000),
-(5, 4, 4, 4, '2026-04-24 13:13:25', 104000),
-(6, 9, 1, 2, '0000-00-00 00:00:00', 88000),
-(7, 9, 1, 2, '0000-00-00 00:00:00', 78000),
-(8, 9, 4, 1, '0000-00-00 00:00:00', 26000),
-(13, 4, 1, 3, '2026-04-25 00:51:41', 78000),
-(22, 3, 1, 1, '2026-04-25 06:49:32', 29000),
-(23, 3, 1, 6, '2026-04-25 06:52:43', 66000),
-(24, 3, 6, 6, '2026-04-25 07:01:56', 66000),
-(25, 4, 8, 4, '2026-04-25 07:12:11', 119000),
-(26, 4, 9, 4, '2026-04-25 07:18:23', 93000),
-(27, 3, NULL, NULL, '2026-04-25 07:26:29', NULL),
-(28, 8, 10, 3, '2026-04-25 07:28:55', 92000),
-(29, 8, NULL, NULL, '2026-04-25 07:29:17', NULL);
+(8, 3, 3, 2, '2026-05-16 01:28:21', 42000),
+(10, 3, 3, 1, '2026-05-16 10:56:10', 17000);
 
 -- --------------------------------------------------------
 
@@ -177,10 +149,9 @@ CREATE TABLE `produk` (
 --
 
 INSERT INTO `produk` (`id`, `nama`, `deskripsi`, `harga`, `gambar`) VALUES
-(1, 'tempe goreng sambal', 'tempe goreng sambal enalk banget', 26000, 'sayur.jpg'),
-(2, 'sayur tumis bakso telor', 'sayur tumis bakso telor\r\n', 12000, 'syr.jpg'),
-(3, 'nasi liwet sambal', 'nasi liwet sambal\r\n', 18000, 'r.jpg'),
-(4, 'nasi sambal enak banget liwet', 'enak banget dah ', 12000, 'r.jpg');
+(1, 'oseng telur bakso', 'enak banget\r\n', 15000, '69feb957250cc.jpg'),
+(2, 'tempe goreng sambal toge ', 'enak banget\r\n', 12000, 'rw.png'),
+(5, 'nasi liwet', 'enak banget', 12000, '69feb968c74bf.jpg');
 
 -- --------------------------------------------------------
 
@@ -191,7 +162,7 @@ INSERT INTO `produk` (`id`, `nama`, `deskripsi`, `harga`, `gambar`) VALUES
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(50) DEFAULT NULL,
-  `password` varchar(50) DEFAULT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `role` enum('admin','petugas','pengunjung') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -200,16 +171,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`) VALUES
-(1, 'admin', '123', 'admin'),
-(2, 'petugas', '123', 'petugas'),
-(3, 'iqbal', '123', 'pengunjung'),
-(4, 'rusdi', '123', 'pengunjung'),
-(5, 'rudi@gmail.com', '123', 'petugas'),
-(6, 'pak yusuf', '123', 'pengunjung'),
-(7, 'hendro', '123', 'admin'),
-(8, 'hendro1', '123', 'pengunjung'),
-(9, 'pak hendro', '123', 'pengunjung'),
-(10, 'pak agus', '234', 'admin');
+(1, 'admin', '$2y$10$bw9HacsFM7SIXhAVY56w9evufCgSyfh3z4aKtU1n.b0UpYmxfXvIy', 'admin'),
+(3, 'iqbal', '$2y$10$d2HChOUc1m/CgWGhuCUdjO8bE0ZKXdOgu6f31JDfN0OwnUEBAEuQO', 'pengunjung'),
+(14, 'petugas', '$2y$10$pKo/wTFEibQhG44UtJ6G6echIQ.QVlOsLIEDwdVRlXeLzlO48Vsnm', 'petugas'),
+(16, 'danu', '$2y$10$jL1K.KEswW9tCrsSUCEKK./qEawXAEE8wVjNRMlz21/iPg.R1fPOm', 'petugas'),
+(17, 'jamal', '$2y$10$fPqK8AEP6olToWbqNJ5JhuYIr.IYgVhTHLXc56DK6siwgS/Iauz4a', 'pengunjung');
 
 --
 -- Indexes for dumped tables
@@ -272,43 +238,43 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `alamat`
 --
 ALTER TABLE `alamat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `detail_pesanan`
 --
 ALTER TABLE `detail_pesanan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `ongkir`
 --
 ALTER TABLE `ongkir`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `pembayaran`
 --
 ALTER TABLE `pembayaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `produk`
 --
 ALTER TABLE `produk`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- Constraints for dumped tables
