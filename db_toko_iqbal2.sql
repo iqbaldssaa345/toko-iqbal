@@ -19,8 +19,11 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `db_toko_iqbal`
+-- Database: `db_toko_iqbal2`
 --
+-- CREATE DATABASE IF NOT EXISTS `db_toko_iqbal2`;
+-- USE `db_toko_iqbal2`;
+
 
 -- --------------------------------------------------------
 

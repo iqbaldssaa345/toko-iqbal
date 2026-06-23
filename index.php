@@ -1,4 +1,30 @@
-<?php include 'koneksi.php'; ?>
+<?php 
+session_start();
+include 'koneksi.php'; 
+
+// Check if user is logged in
+$logged_in = false;
+$username_session = "";
+$dashboard_url = "";
+if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['role'])) {
+    $logged_in = true;
+    $user_id = $_SESSION['id'];
+    $q_user = mysqli_query($conn, "SELECT username FROM users WHERE id='$user_id'");
+    if(mysqli_num_rows($q_user) > 0) {
+        $d_user = mysqli_fetch_assoc($q_user);
+        $username_session = $d_user['username'];
+    }
+    
+    // Determine dashboard url based on role
+    if($_SESSION['role'] == "admin") {
+        $dashboard_url = "admin/index.php";
+    } elseif($_SESSION['role'] == "petugas") {
+        $dashboard_url = "petugas/index.php";
+    } else {
+        $dashboard_url = "pengunjung/index.php";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -130,6 +156,9 @@
             padding: 10px 24px;
             border-radius: 0;
             transition: all 0.3s ease !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .btn-gold-filled:hover {
@@ -397,9 +426,10 @@
 
         /* FOOTER */
         .footer {
-            background: var(--dark);
-            color: #999;
+            background: #111112;
+            color: #a0a0a5;
             padding: 80px 8% 40px;
+            border-top: 2px solid var(--gold);
         }
 
         .footer-content {
@@ -410,14 +440,17 @@
         }
 
         .footer-col h4 {
-            color: var(--white);
-            font-size: 20px;
-            margin-bottom: 25px;
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
         }
 
         .footer-col p {
+            font-size: 0.9rem;
+            line-height: 1.6;
             margin-bottom: 15px;
-            font-size: 15px;
         }
 
         .footer-col p i {
@@ -427,33 +460,37 @@
 
         .social-links {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             margin-top: 20px;
         }
 
         .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
             width: 40px;
             height: 40px;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: var(--white);
             border-radius: 50%;
-            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
             text-decoration: none;
+            transition: all 0.3s ease;
         }
 
         .social-links a:hover {
             background: var(--gold);
-            border-color: var(--gold);
+            color: #111112;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
         }
 
         .footer-bottom {
-            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
             padding-top: 30px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            font-size: 14px;
+            text-align: center;
+            font-size: 0.85rem;
         }
 
         /* RESPONSIVE */
@@ -488,8 +525,12 @@
         <div class="nav-links">
             <a href="#about">Tentang Kami</a>
             <a href="#produk">Menu</a>
-            <a href="login.php" class="btn-gold">Login</a>
-            <a href="daftar.php" class="btn-gold-filled">Daftar</a>
+            <?php if($logged_in){ ?>
+                <a href="<?= $dashboard_url ?>" class="btn-gold-filled"><i class="fa fa-user"></i> <?= htmlspecialchars($username_session) ?></a>
+            <?php } else { ?>
+                <a href="login.php" class="btn-gold">Login</a>
+                <a href="daftar.php" class="btn-gold-filled">Daftar</a>
+            <?php } ?>
         </div>
     </nav>
 
@@ -558,7 +599,11 @@
                     <h3><?= htmlspecialchars($d['nama']); ?></h3>
                     <p><?= htmlspecialchars($d['deskripsi']); ?></p>
                     <div class="price">Rp <?= number_format($d['harga'], 0, ',', '.'); ?></div>
-                    <a href="login.php" class="buy-btn">Pesan Sekarang</a>
+                    <?php if($logged_in) { ?>
+                        <a href="<?= $_SESSION['role'] == 'pengunjung' ? 'pengunjung/pesan.php?id='.$d['id'] : $dashboard_url ?>" class="buy-btn">Pesan Sekarang</a>
+                    <?php } else { ?>
+                        <a href="beli.php?id=<?= $d['id']; ?>" class="buy-btn">Pesan Sekarang</a>
+                    <?php } ?>
                 </div>
             </div>
             <?php } ?>
@@ -587,11 +632,15 @@
                 <h4>Menu Cepat</h4>
                 <p><a href="#about" style="color:#999;text-decoration:none;">Tentang Kami</a></p>
                 <p><a href="#produk" style="color:#999;text-decoration:none;">Menu Eksklusif</a></p>
-                <p><a href="login.php" style="color:#999;text-decoration:none;">Login Pelanggan</a></p>
+                <?php if($logged_in) { ?>
+                    <p><a href="<?= $dashboard_url ?>" style="color:#999;text-decoration:none;">Dashboard Anda</a></p>
+                <?php } else { ?>
+                    <p><a href="login.php" style="color:#999;text-decoration:none;">Login Pelanggan</a></p>
+                <?php } ?>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 Catering Ibu Iqbal. All Rights Reserved. Designed with <i class="fa-solid fa-heart" style="color:var(--gold);"></i></p>
+            <p>&copy; 2026 Catering Ibu Iqbal. </i></p>
         </div>
     </footer>
 
