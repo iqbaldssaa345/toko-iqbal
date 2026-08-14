@@ -34,6 +34,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </a>
         </li>
         <li>
+            <a href="testimoni.php" class="<?= $current_page == 'testimoni.php' ? 'active' : '' ?>">
+                <i class="fa fa-comment-dots"></i> <span>Testimoni</span>
+            </a>
+        </li>
+        <li>
             <a href="../logout.php" class="mt-auto text-danger">
                 <i class="fa fa-sign-out-alt"></i> <span>Logout</span>
             </a>

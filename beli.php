@@ -47,9 +47,12 @@ $terjual = intval($d_terjual['total_terjual']);
         :root {
             --gold: #D4AF37;
             --gold-dark: #AA8C2C;
-            --dark: #1A1A1D;
-            --light: #F9F6F0;
+            --gold-light: rgba(212, 175, 55, 0.12);
+            --gold-glow: rgba(212, 175, 55, 0.35);
+            --dark: #0F0F11;
+            --light: #F6F5F2;
             --white: #FFFFFF;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         body {
@@ -67,7 +70,9 @@ $terjual = intval($d_terjual['total_terjual']);
         .navbar {
             background: var(--dark) !important;
             padding: 20px 8%;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+            transition: var(--transition);
         }
 
         .brand-name {
@@ -75,6 +80,7 @@ $terjual = intval($d_terjual['total_terjual']);
             font-weight: 700;
             color: var(--gold) !important;
             text-decoration: none;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
         }
 
         .nav-links a {
@@ -83,7 +89,7 @@ $terjual = intval($d_terjual['total_terjual']);
             font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            transition: color 0.3s;
+            transition: var(--transition);
             margin-left: 20px;
         }
 
@@ -95,14 +101,17 @@ $terjual = intval($d_terjual['total_terjual']);
             background: transparent;
             border: 1px solid var(--gold);
             color: var(--gold) !important;
-            padding: 8px 20px;
-            border-radius: 0;
-            transition: all 0.3s ease;
+            padding: 8px 22px;
+            border-radius: 30px;
+            transition: var(--transition) !important;
+            font-weight: 500;
         }
 
         .btn-gold:hover {
-            background: var(--gold);
-            color: var(--white) !important;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: var(--dark) !important;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+            border-color: transparent;
         }
 
         /* CONTAINER LAYOUT */
@@ -118,6 +127,11 @@ $terjual = intval($d_terjual['total_terjual']);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
             border: 1px solid rgba(0,0,0,0.02);
             overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .product-detail-container:hover {
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06);
         }
         
         .product-gallery-side {
@@ -144,6 +158,11 @@ $terjual = intval($d_terjual['total_terjual']);
             align-items: center;
             justify-content: center;
             border: 1px solid rgba(0,0,0,0.02);
+            transition: var(--transition);
+        }
+
+        .product-img-card:hover {
+            transform: scale(1.03);
         }
 
         .product-img-card img {
@@ -246,7 +265,7 @@ $terjual = intval($d_terjual['total_terjual']);
         .shopee-price-big {
             font-size: 2.1rem;
             font-weight: 700;
-            color: #ee4d2d;
+            color: var(--gold);
             margin-bottom: 0;
         }
 
@@ -305,7 +324,7 @@ $terjual = intval($d_terjual['total_terjual']);
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #d0011b;
+            color: var(--gold-dark);
             font-weight: 600;
             font-size: 0.9rem;
         }
@@ -330,6 +349,7 @@ $terjual = intval($d_terjual['total_terjual']);
             justify-content: center;
             color: #555;
             cursor: pointer;
+            transition: var(--transition);
         }
 
         .shopee-quantity-btn:hover {
@@ -393,10 +413,10 @@ $terjual = intval($d_terjual['total_terjual']);
         }
 
         .btn-shopee-cart {
-            background: rgba(238, 77, 45, 0.08);
-            border: 1px solid #ee4d2d;
-            color: #ee4d2d;
-            border-radius: 6px;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            border-radius: 30px;
             padding: 14px 24px;
             font-weight: 600;
             display: inline-flex;
@@ -404,50 +424,49 @@ $terjual = intval($d_terjual['total_terjual']);
             justify-content: center;
             gap: 10px;
             font-size: 0.95rem;
-            transition: all 0.3s;
+            transition: var(--transition);
             flex-grow: 1;
             text-decoration: none;
-            box-shadow: 0 2px 4px rgba(238, 77, 45, 0.04);
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.05);
         }
 
         .btn-shopee-cart:hover {
-            background: rgba(238, 77, 45, 0.14);
-            transform: translateY(-1px);
-            color: #ee4d2d;
+            background: rgba(212, 175, 55, 0.15);
+            transform: translateY(-2px);
+            color: var(--gold);
         }
 
         .btn-shopee-buy {
-            background: #ee4d2d;
-            border: 1px solid #ee4d2d;
-            color: #ffffff;
-            border-radius: 6px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            border: none;
+            color: var(--dark);
+            border-radius: 30px;
             padding: 14px 30px;
-            font-weight: 600;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
             font-size: 0.95rem;
-            transition: all 0.3s;
+            transition: var(--transition);
             flex-grow: 1.5;
             text-decoration: none;
-            box-shadow: 0 4px 12px rgba(238, 77, 45, 0.2);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
         }
 
         .btn-shopee-buy:hover {
-            background: #d0011b;
-            border-color: #d0011b;
-            transform: translateY(-1px);
-            color: #ffffff;
-            box-shadow: 0 6px 16px rgba(238, 77, 45, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #f1e2c3 100%);
+            transform: translateY(-2px);
+            color: var(--dark);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.35);
         }
 
         /* PREMIUM FOOTER STYLE */
         .premium-footer {
-            background: #111112;
+            background: #0F0F11;
             color: #a0a0a5;
             padding: 70px 0 35px 0;
-            border-top: 2px solid var(--gold);
+            border-top: 1px solid rgba(212, 175, 55, 0.25);
             margin-top: 80px;
         }
 
@@ -516,22 +535,23 @@ $terjual = intval($d_terjual['total_terjual']);
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.15);
             color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1rem;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         .footer-socials a:hover {
-            background: var(--gold);
-            color: #111112;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: var(--dark);
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35);
+            border-color: transparent;
         }
 
         .footer-links, .footer-contact {
@@ -547,7 +567,7 @@ $terjual = intval($d_terjual['total_terjual']);
         .footer-links a {
             color: #a0a0a5;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -696,7 +716,9 @@ $terjual = intval($d_terjual['total_terjual']);
                                     <button type="button" class="shopee-quantity-btn" onclick="increaseQty()"><i class="fa fa-plus"></i></button>
                                 </div>
                                 <div class="shopee-stock-info">
-                                    Tersedia Banyak
+                                    <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle py-2 px-3 rounded-pill">
+                                        <i class="fa fa-clock me-1"></i> Pre-Order: <?= htmlspecialchars($produk['pre_order']) ?>
+                                    </span>
                                 </div>
                             </div>
 
@@ -777,14 +799,15 @@ $terjual = intval($d_terjual['total_terjual']);
     const baseRedirect = "login.php?redirect=pengunjung/pesan.php?id=<?= $id; ?>";
 
     function updateRedirectLinks(qty) {
-        // Update the redirection links dynamically to preserve selected quantity
-        loginLinks[0].href = baseRedirect + "&jumlah=" + qty;
-        loginLinks[1].href = baseRedirect + "&jumlah=" + qty + "&action=beli";
+        if (loginLinks.length >= 2) {
+            loginLinks[0].href = baseRedirect + "&jumlah=" + qty;
+            loginLinks[1].href = baseRedirect + "&jumlah=" + qty + "&action=beli";
+        }
     }
 
     function increaseQty() {
         let val = parseInt(qtyInput.value);
-        if (isNaN(val)) val = 1;
+        if (isNaN(val)) val = 0;
         qtyInput.value = val + 1;
         updateRedirectLinks(qtyInput.value);
     }
@@ -799,7 +822,7 @@ $terjual = intval($d_terjual['total_terjual']);
     }
 
     // Initialize links
-    updateRedirectLinks(1);
+    updateRedirectLinks(qtyInput.value);
     </script>
 </body>
 </html>

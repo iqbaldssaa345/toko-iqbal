@@ -14,13 +14,14 @@ $nama_petugas = $d_petugas['username'];
 
 /* ================= TAMBAH ================= */
 if(isset($_POST['tambah'])){
-    $user_id   = intval($_POST['user_id']);
-    $alamat_id = intval($_POST['alamat_id']);
-    $ongkir_id = intval($_POST['ongkir_id']);
-    $total     = intval($_POST['total']);
+    $user_id           = intval($_POST['user_id']);
+    $alamat_id         = intval($_POST['alamat_id']);
+    $ongkir_id         = intval($_POST['ongkir_id']);
+    $total             = intval($_POST['total']);
+    $status_pengiriman = mysqli_real_escape_string($conn, $_POST['status_pengiriman']);
 
-    mysqli_query($conn,"INSERT INTO pesanan (user_id,alamat_id,ongkir_id,total)
-    VALUES('$user_id','$alamat_id','$ongkir_id','$total')");
+    mysqli_query($conn,"INSERT INTO pesanan (user_id,alamat_id,ongkir_id,total,status_pengiriman)
+    VALUES('$user_id','$alamat_id','$ongkir_id','$total','$status_pengiriman')");
 
     header("location:pesanan.php?pesan=sukses_tambah");
     exit;
@@ -40,17 +41,19 @@ if(isset($_GET['hapus'])){
 
 /* ================= EDIT ================= */
 if(isset($_POST['edit'])){
-    $id        = intval($_POST['id']);
-    $user_id   = intval($_POST['user_id']);
-    $alamat_id = intval($_POST['alamat_id']);
-    $ongkir_id = intval($_POST['ongkir_id']);
-    $total     = intval($_POST['total']);
+    $id                = intval($_POST['id']);
+    $user_id           = intval($_POST['user_id']);
+    $alamat_id         = intval($_POST['alamat_id']);
+    $ongkir_id         = intval($_POST['ongkir_id']);
+    $total             = intval($_POST['total']);
+    $status_pengiriman = mysqli_real_escape_string($conn, $_POST['status_pengiriman']);
 
     mysqli_query($conn,"UPDATE pesanan SET
         user_id='$user_id',
         alamat_id='$alamat_id',
         ongkir_id='$ongkir_id',
-        total='$total'
+        total='$total',
+        status_pengiriman='$status_pengiriman'
         WHERE id='$id'
     ");
 
@@ -60,7 +63,7 @@ if(isset($_POST['edit'])){
 
 /* ================= DATA LIST ================= */
 $data = mysqli_query($conn,"
-    SELECT p.*, u.username, a.nama_penerima, a.kota, o.nama_jasa 
+    SELECT p.*, u.username, a.nama_penerima, a.kota, o.nama_jasa, o.estimasi 
     FROM pesanan p
     JOIN users u ON p.user_id = u.id
     LEFT JOIN alamat a ON p.alamat_id = a.id
@@ -71,7 +74,7 @@ $data = mysqli_query($conn,"
 /* Fetch Dropdown Data */
 $users_opt = mysqli_query($conn, "SELECT id, username FROM users ORDER BY username ASC");
 $alamat_opt = mysqli_query($conn, "SELECT a.id, a.nama_penerima, a.kota, u.username FROM alamat a JOIN users u ON a.user_id=u.id ORDER BY u.username ASC");
-$ongkir_opt = mysqli_query($conn, "SELECT id, nama_jasa, biaya FROM ongkir ORDER BY nama_jasa ASC");
+$ongkir_opt = mysqli_query($conn, "SELECT id, nama_jasa, biaya, estimasi FROM ongkir ORDER BY nama_jasa ASC");
 ?>
 
 <!DOCTYPE html>
@@ -122,13 +125,16 @@ $ongkir_opt = mysqli_query($conn, "SELECT id, nama_jasa, biaya FROM ongkir ORDER
                             <th>Pelanggan</th>
                             <th>Alamat Penerima</th>
                             <th>Kurir (Ongkir)</th>
+                            <th>Status Pengiriman</th>
                             <th>Tanggal</th>
                             <th>Total Tagihan</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while($d = mysqli_fetch_array($data)){ ?>
+                        <?php while($d = mysqli_fetch_array($data)){ 
+                            $st_pengiriman = isset($d['status_pengiriman']) && !empty($d['status_pengiriman']) ? $d['status_pengiriman'] : 'Proses (Estimasi)';
+                        ?>
                         <tr>
                             <td><strong>#<?= $d['id'] ?></strong></td>
                             <td>
@@ -151,11 +157,24 @@ $ongkir_opt = mysqli_query($conn, "SELECT id, nama_jasa, biaya FROM ongkir ORDER
                                 <?php } ?>
                             </td>
                             <td>
-                                <?php if($d['ongkir_id']) { ?>
+                                <?php if($d['ongkir_id']) { 
+                                    $o_est = isset($d['estimasi']) && !empty($d['estimasi']) ? $d['estimasi'] : '1-2 Hari';
+                                ?>
                                     <div class="fw-semibold"><?= htmlspecialchars($d['nama_jasa']) ?></div>
-                                    <div class="small text-muted">ID: <?= $d['ongkir_id'] ?></div>
+                                    <div class="small text-muted"><i class="fa fa-clock text-warning me-1"></i><?= htmlspecialchars($o_est) ?></div>
                                 <?php } else { ?>
                                     <span class="text-danger small">Belum diisi (NULL)</span>
+                                <?php } ?>
+                            </td>
+                            <td>
+                                <?php if($st_pengiriman == 'Sampai') { ?>
+                                    <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle px-3 py-2 rounded-pill fw-semibold">
+                                        <i class="fa fa-check-circle me-1"></i> Sampai
+                                    </span>
+                                <?php } else { ?>
+                                    <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill fw-semibold">
+                                        <i class="fa fa-truck-fast me-1"></i> <?= htmlspecialchars($st_pengiriman) ?>
+                                    </span>
                                 <?php } ?>
                             </td>
                             <td><?= htmlspecialchars($d['tanggal']) ?></td>
@@ -219,6 +238,14 @@ $ongkir_opt = mysqli_query($conn, "SELECT id, nama_jasa, biaya FROM ongkir ORDER
                                                         <?= htmlspecialchars($o['nama_jasa']) ?> - Rp <?= number_format($o['biaya']) ?> (ID: <?= $o['id'] ?>)
                                                     </option>
                                                     <?php } ?>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label-muted">Status Pengiriman</label>
+                                                <select name="status_pengiriman" class="form-select" required>
+                                                    <option value="Proses (Estimasi)" <?= ($st_pengiriman == 'Proses (Estimasi)') ? 'selected' : '' ?>>🚚 Dalam Pengiriman / Proses (Estimasi)</option>
+                                                    <option value="Sampai" <?= ($st_pengiriman == 'Sampai') ? 'selected' : '' ?>>✅ Sampai (Tiba di Tujuan)</option>
                                                 </select>
                                             </div>
                                             
@@ -286,6 +313,14 @@ $ongkir_opt = mysqli_query($conn, "SELECT id, nama_jasa, biaya FROM ongkir ORDER
                                     <?= htmlspecialchars($o['nama_jasa']) ?> - Rp <?= number_format($o['biaya']) ?> (ID: <?= $o['id'] ?>)
                                 </option>
                                 <?php } ?>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-muted">Status Pengiriman</label>
+                            <select name="status_pengiriman" class="form-select" required>
+                                <option value="Proses (Estimasi)" selected>🚚 Dalam Pengiriman / Proses (Estimasi)</option>
+                                <option value="Sampai">✅ Sampai (Tiba di Tujuan)</option>
                             </select>
                         </div>
                         

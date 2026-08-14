@@ -23,11 +23,16 @@ if(isset($_POST['tambah'])){
 if(isset($_GET['hapus'])){
     $id = intval($_GET['hapus']);
 
-    // Cari pesanan_id dari detail_pesanan
-    $q_dp = mysqli_query($conn, "SELECT pesanan_id FROM detail_pesanan dp JOIN pesanan p ON dp.pesanan_id=p.id WHERE dp.id='$id' AND p.user_id='$user_id'");
+    // Cari pesanan_id, produk_id, dan jumlah dari detail_pesanan
+    $q_dp = mysqli_query($conn, "SELECT pesanan_id, produk_id, jumlah FROM detail_pesanan dp JOIN pesanan p ON dp.pesanan_id=p.id WHERE dp.id='$id' AND p.user_id='$user_id'");
     if(mysqli_num_rows($q_dp) > 0) {
         $r_dp = mysqli_fetch_assoc($q_dp);
         $pesanan_id = $r_dp['pesanan_id'];
+        $produk_id = $r_dp['produk_id'];
+        $jumlah = intval($r_dp['jumlah']);
+        
+        // Kembalikan stok produk
+        mysqli_query($conn, "UPDATE produk SET stok = stok + $jumlah WHERE id='$produk_id'");
         
         // Hapus detail, pembayaran, lalu pesanan utamanya
         mysqli_query($conn,"DELETE FROM detail_pesanan WHERE id='$id'");
@@ -41,10 +46,11 @@ if(isset($_GET['hapus'])){
 
 /* ================= DATA ================= */
 $data = mysqli_query($conn,"
-SELECT dp.*, pr.nama, pr.harga, pr.gambar, p.id as pesanan_id, p.total as pesanan_total, pb.status as status_bayar 
+SELECT dp.*, pr.nama, pr.harga, pr.gambar, pr.pre_order, o.nama_jasa, o.estimasi as estimasi_ongkir, p.id as pesanan_id, p.total as pesanan_total, p.status_pengiriman, pb.status as status_bayar 
 FROM detail_pesanan dp
 JOIN pesanan p ON dp.pesanan_id=p.id
 JOIN produk pr ON dp.produk_id=pr.id
+LEFT JOIN ongkir o ON p.ongkir_id=o.id
 LEFT JOIN pembayaran pb ON p.id = pb.pesanan_id
 WHERE p.user_id='$user_id'
 ORDER BY dp.id DESC
@@ -208,7 +214,29 @@ $produk = mysqli_query($conn,"SELECT * FROM produk");
                                                 Harga: Rp <?= number_format($d['harga'], 0, ',', '.') ?> &bull; 
                                                 Jumlah: <?= $d['jumlah'] ?> Porsi
                                             </div>
-                                            <div class="pesanan-price">Total: Rp <?= number_format($d['subtotal'], 0, ',', '.') ?></div>
+                                            <div class="pesanan-meta mt-1">
+                                                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-1 rounded-pill me-1" style="font-size: 0.75rem;">
+                                                    <i class="fa fa-clock me-1"></i> Pre-Order: <?= htmlspecialchars($d['pre_order'] ? $d['pre_order'] : '1 Hari') ?>
+                                                </span>
+                                                <?php if($d['nama_jasa']) { ?>
+                                                <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle px-2 py-1 rounded-pill me-1" style="font-size: 0.75rem;">
+                                                    <i class="fa fa-truck me-1"></i> <?= htmlspecialchars($d['nama_jasa']) ?> (<?= htmlspecialchars($d['estimasi_ongkir'] ? $d['estimasi_ongkir'] : '1-2 Hari') ?>)
+                                                </span>
+                                                <?php } ?>
+                                                <?php 
+                                                    $st_pengirim = isset($d['status_pengiriman']) && !empty($d['status_pengiriman']) ? $d['status_pengiriman'] : 'Proses (Estimasi)';
+                                                    if($st_pengirim == 'Sampai') { 
+                                                ?>
+                                                    <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle px-2 py-1 rounded-pill" style="font-size: 0.75rem;">
+                                                        <i class="fa fa-check-circle me-1"></i> Status: Sampai
+                                                    </span>
+                                                <?php } else { ?>
+                                                    <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle px-2 py-1 rounded-pill" style="font-size: 0.75rem;">
+                                                        <i class="fa fa-truck-fast me-1"></i> Status: <?= htmlspecialchars($st_pengirim) ?>
+                                                    </span>
+                                                <?php } ?>
+                                            </div>
+                                            <div class="pesanan-price mt-2">Total: Rp <?= number_format($d['subtotal'], 0, ',', '.') ?></div>
                                         </div>
                                         
                                         <div class="d-flex gap-2 align-items-center action-wrapper">

@@ -20,6 +20,7 @@ if(isset($_POST['tambah'])){
 
     // ambil harga produk
     $p = mysqli_fetch_array(mysqli_query($conn,"SELECT harga FROM produk WHERE id='$produk_id'"));
+
     $subtotal = $p['harga'] * $jumlah;
 
     mysqli_query($conn,"INSERT INTO detail_pesanan (pesanan_id,produk_id,jumlah,subtotal)
@@ -33,6 +34,8 @@ if(isset($_POST['tambah'])){
 if(isset($_GET['hapus'])){
     $id = intval($_GET['hapus']);
 
+
+
     mysqli_query($conn,"DELETE FROM detail_pesanan WHERE id='$id'");
 
     header("location:detail_pesanan.php?pesan=sukses_hapus");
@@ -45,7 +48,16 @@ if(isset($_POST['edit'])){
     $produk_id  = intval($_POST['produk_id']);
     $jumlah     = intval($_POST['jumlah']);
 
+    // Ambil data detail lama
+    $cek_dp = mysqli_fetch_array(mysqli_query($conn, "SELECT produk_id, jumlah FROM detail_pesanan WHERE id='$id'"));
+    if (!$cek_dp) {
+        die("Data pesanan tidak ditemukan");
+    }
+    $old_produk_id = $cek_dp['produk_id'];
+    $old_qty = intval($cek_dp['jumlah']);
+
     $p = mysqli_fetch_array(mysqli_query($conn,"SELECT harga FROM produk WHERE id='$produk_id'"));
+
     $subtotal = $p['harga'] * $jumlah;
 
     mysqli_query($conn,"UPDATE detail_pesanan SET
@@ -61,7 +73,7 @@ if(isset($_POST['edit'])){
 
 /* ================= DATA LIST ================= */
 $data = mysqli_query($conn,"
-    SELECT dp.*, produk.nama 
+    SELECT dp.*, produk.nama, produk.pre_order 
     FROM detail_pesanan dp
     LEFT JOIN produk ON dp.produk_id = produk.id
     ORDER BY dp.id ASC
@@ -137,9 +149,16 @@ $produk  = mysqli_query($conn,"SELECT id, nama, harga FROM produk ORDER BY nama 
                                 </div>
                             </td>
                             <td>
-                                <span class="text-dark fw-semibold">
-                                    <i class="fa fa-box-open me-1 text-muted"></i> <?= htmlspecialchars($d['nama'] ? $d['nama'] : 'Produk Dihapus') ?>
-                                </span>
+                                <div>
+                                    <span class="text-dark fw-semibold">
+                                        <i class="fa fa-box-open me-1 text-muted"></i> <?= htmlspecialchars($d['nama'] ? $d['nama'] : 'Produk Dihapus') ?>
+                                    </span>
+                                </div>
+                                <div class="small text-muted mt-1">
+                                    <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-1 rounded-pill" style="font-size: 0.75rem;">
+                                        <i class="fa fa-clock me-1"></i> Pre-Order: <?= htmlspecialchars($d['pre_order'] ? $d['pre_order'] : '1 Hari') ?>
+                                    </span>
+                                </div>
                             </td>
                             <td><span class="price-badge" style="background-color: #f1f3f5; color: #495057;"> <?= htmlspecialchars($d['jumlah']) ?> Porsi</span></td>
                             <td><span class="fw-bold text-dark">Rp <?= number_format($d['subtotal']) ?></span></td>

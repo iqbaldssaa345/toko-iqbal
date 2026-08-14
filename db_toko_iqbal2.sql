@@ -76,18 +76,24 @@ INSERT INTO `detail_pesanan` (`id`, `pesanan_id`, `produk_id`, `jumlah`, `subtot
 CREATE TABLE `ongkir` (
   `id` int(11) NOT NULL,
   `nama_jasa` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `biaya` int(11) DEFAULT NULL
+  `biaya` int(11) DEFAULT NULL,
+  `estimasi` varchar(50) DEFAULT '1-2 Hari'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `ongkir`
 --
 
-INSERT INTO `ongkir` (`id`, `nama_jasa`, `biaya`) VALUES
-(1, 'GoFood', 5000),
-(2, 'GrabFood', 6000),
-(4, 'jne', 7000),
-(6, 'antareja', 10000);
+INSERT INTO `ongkir` (`id`, `nama_jasa`, `biaya`, `estimasi`) VALUES
+(1, 'Kurir Toko (Jarak < 5 km)', 10000, 'Hari Ini (1-2 Jam)'),
+(2, 'GoSend Instant (Jarak < 20 km)', 18000, '1-2 Jam'),
+(4, 'JNE REG (Jabodetabek)', 11000, '1-2 Hari'),
+(6, 'GrabExpress Sameday', 20000, '3-5 Jam'),
+(9, 'Kurir Toko (Jarak 5-15 km)', 18000, 'Hari Ini (2-4 Jam)'),
+(10, 'JNE YES (Yakin Esok Sampai)', 22000, '1 Hari'),
+(11, 'J&T Express (Regular)', 12000, '1-2 Hari'),
+(12, 'SiCepat BEST (Besok Sampai)', 21000, '1 Hari'),
+(13, 'Mobil Catering Special (Bulk Order)', 45000, 'Hari Ini (Jam Acara)');
 
 -- --------------------------------------------------------
 
@@ -99,7 +105,8 @@ CREATE TABLE `pembayaran` (
   `id` int(11) NOT NULL,
   `pesanan_id` int(11) DEFAULT NULL,
   `metode` varchar(50) DEFAULT NULL,
-  `status` enum('pending','lunas') DEFAULT 'pending'
+  `status` enum('pending','lunas') DEFAULT 'pending',
+  `bukti_pembayaran` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -122,16 +129,17 @@ CREATE TABLE `pesanan` (
   `alamat_id` int(11) DEFAULT NULL,
   `ongkir_id` int(11) DEFAULT NULL,
   `tanggal` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `total` int(11) DEFAULT NULL
+  `total` int(11) DEFAULT NULL,
+  `status_pengiriman` varchar(50) DEFAULT 'Proses (Estimasi)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `pesanan`
 --
 
-INSERT INTO `pesanan` (`id`, `user_id`, `alamat_id`, `ongkir_id`, `tanggal`, `total`) VALUES
-(8, 3, 3, 2, '2026-05-16 01:28:21', 42000),
-(10, 3, 3, 1, '2026-05-16 10:56:10', 17000);
+INSERT INTO `pesanan` (`id`, `user_id`, `alamat_id`, `ongkir_id`, `tanggal`, `total`, `status_pengiriman`) VALUES
+(8, 3, 3, 2, '2026-05-16 01:28:21', 42000, 'Proses (Estimasi)'),
+(10, 3, 3, 1, '2026-05-16 10:56:10', 17000, 'Sampai');
 
 -- --------------------------------------------------------
 
@@ -144,17 +152,18 @@ CREATE TABLE `produk` (
   `nama` varchar(100) DEFAULT NULL,
   `deskripsi` text,
   `harga` int(11) DEFAULT NULL,
-  `gambar` varchar(100) DEFAULT NULL
+  `gambar` varchar(100) DEFAULT NULL,
+  `pre_order` varchar(100) DEFAULT '1 Hari'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `produk`
 --
 
-INSERT INTO `produk` (`id`, `nama`, `deskripsi`, `harga`, `gambar`) VALUES
-(1, 'oseng telur bakso', 'enak banget\r\n', 15000, '69feb957250cc.jpg'),
-(2, 'tempe goreng sambal toge ', 'enak banget\r\n', 12000, 'rw.png'),
-(5, 'nasi liwet', 'enak banget', 12000, '69feb968c74bf.jpg');
+INSERT INTO `produk` (`id`, `nama`, `deskripsi`, `harga`, `gambar`, `pre_order`) VALUES
+(1, 'oseng telur bakso', 'enak banget\r\n', 15000, '69feb957250cc.jpg', '1 Hari'),
+(2, 'tempe goreng sambal toge ', 'enak banget\r\n', 12000, 'rw.png', '1 Hari'),
+(5, 'nasi liwet', 'enak banget', 12000, '69feb968c74bf.jpg', '2 Hari');
 
 -- --------------------------------------------------------
 
@@ -167,6 +176,20 @@ CREATE TABLE `users` (
   `username` varchar(50) DEFAULT NULL,
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `role` enum('admin','petugas','pengunjung') DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `testimoni`
+--
+
+CREATE TABLE `testimoni` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `bintang` int(11) DEFAULT '5',
+  `isi_testimoni` text NOT NULL,
+  `tanggal` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -234,6 +257,13 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `testimoni`
+--
+ALTER TABLE `testimoni`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -280,6 +310,12 @@ ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
+-- AUTO_INCREMENT for table `testimoni`
+--
+ALTER TABLE `testimoni`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -309,6 +345,12 @@ ALTER TABLE `pesanan`
   ADD CONSTRAINT `pesanan_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `pesanan_ibfk_2` FOREIGN KEY (`alamat_id`) REFERENCES `alamat` (`id`),
   ADD CONSTRAINT `pesanan_ibfk_3` FOREIGN KEY (`ongkir_id`) REFERENCES `ongkir` (`id`);
+
+--
+-- Constraints for table `testimoni`
+--
+ALTER TABLE `testimoni`
+  ADD CONSTRAINT `testimoni_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -18,8 +18,23 @@ if(isset($_POST['tambah'])){
     $metode     = mysqli_real_escape_string($conn,$_POST['metode']);
     $status     = mysqli_real_escape_string($conn,$_POST['status']);
 
-    mysqli_query($conn,"INSERT INTO pembayaran (pesanan_id,metode,status)
-    VALUES('$pesanan_id','$metode','$status')");
+    $bukti_pembayaran = "";
+    if (isset($_FILES['bukti_pembayaran']) && $_FILES['bukti_pembayaran']['error'] == UPLOAD_ERR_OK) {
+        $file_name = $_FILES['bukti_pembayaran']['name'];
+        $file_tmp = $_FILES['bukti_pembayaran']['tmp_name'];
+        $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+        
+        $allowed_ext = array("jpg", "jpeg", "png");
+        if (in_array($file_ext, $allowed_ext)) {
+            $new_filename = "pembayaran_" . time() . "_" . rand(1000, 9999) . "." . $file_ext;
+            if (move_uploaded_file($file_tmp, "../upload/" . $new_filename)) {
+                $bukti_pembayaran = $new_filename;
+            }
+        }
+    }
+
+    mysqli_query($conn,"INSERT INTO pembayaran (pesanan_id,metode,status,bukti_pembayaran)
+    VALUES('$pesanan_id','$metode','$status','$bukti_pembayaran')");
 
     header("location:pembayaran.php?pesan=sukses_tambah");
     exit;
@@ -28,6 +43,15 @@ if(isset($_POST['tambah'])){
 /* ================= HAPUS ================= */
 if(isset($_GET['hapus'])){
     $id = intval($_GET['hapus']);
+
+    $cek_del = mysqli_query($conn, "SELECT bukti_pembayaran FROM pembayaran WHERE id='$id'");
+    if (mysqli_num_rows($cek_del) > 0) {
+        $row_del = mysqli_fetch_assoc($cek_del);
+        $file_del = $row_del['bukti_pembayaran'];
+        if ($file_del && file_exists("../upload/" . $file_del)) {
+            unlink("../upload/" . $file_del);
+        }
+    }
 
     mysqli_query($conn,"DELETE FROM pembayaran WHERE id='$id'");
 
@@ -42,12 +66,47 @@ if(isset($_POST['edit'])){
     $metode     = mysqli_real_escape_string($conn,$_POST['metode']);
     $status     = mysqli_real_escape_string($conn,$_POST['status']);
 
-    mysqli_query($conn,"UPDATE pembayaran SET
-        pesanan_id='$pesanan_id',
-        metode='$metode',
-        status='$status'
-        WHERE id='$id'
-    ");
+    $bukti_pembayaran = "";
+    if (isset($_FILES['bukti_pembayaran']) && $_FILES['bukti_pembayaran']['error'] == UPLOAD_ERR_OK) {
+        $file_name = $_FILES['bukti_pembayaran']['name'];
+        $file_tmp = $_FILES['bukti_pembayaran']['tmp_name'];
+        $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+        
+        $allowed_ext = array("jpg", "jpeg", "png");
+        if (in_array($file_ext, $allowed_ext)) {
+            $new_filename = "pembayaran_" . time() . "_" . rand(1000, 9999) . "." . $file_ext;
+            if (move_uploaded_file($file_tmp, "../upload/" . $new_filename)) {
+                $bukti_pembayaran = $new_filename;
+            }
+        }
+    }
+
+    if ($bukti_pembayaran != "") {
+        // Hapus file lama jika ada
+        $cek_old = mysqli_query($conn, "SELECT bukti_pembayaran FROM pembayaran WHERE id='$id'");
+        if (mysqli_num_rows($cek_old) > 0) {
+            $row_old = mysqli_fetch_assoc($cek_old);
+            $old_file = $row_old['bukti_pembayaran'];
+            if ($old_file && file_exists("../upload/" . $old_file)) {
+                unlink("../upload/" . $old_file);
+            }
+        }
+        
+        mysqli_query($conn,"UPDATE pembayaran SET
+            pesanan_id='$pesanan_id',
+            metode='$metode',
+            status='$status',
+            bukti_pembayaran='$bukti_pembayaran'
+            WHERE id='$id'
+        ");
+    } else {
+        mysqli_query($conn,"UPDATE pembayaran SET
+            pesanan_id='$pesanan_id',
+            metode='$metode',
+            status='$status'
+            WHERE id='$id'
+        ");
+    }
 
     header("location:pembayaran.php?pesan=sukses_edit");
     exit;
@@ -77,6 +136,11 @@ $pesanan_opt = mysqli_query($conn, "SELECT p.id, p.total, u.username FROM pesana
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../css/dashboard.css" rel="stylesheet">
+    <style>
+        .text-gold {
+            color: #D4AF37;
+        }
+    </style>
 </head>
 
 <body>
@@ -114,6 +178,7 @@ $pesanan_opt = mysqli_query($conn, "SELECT p.id, p.total, u.username FROM pesana
                             <th>ID Pesanan</th>
                             <th>Pelanggan</th>
                             <th>Metode Pembayaran</th>
+                            <th>Bukti</th>
                             <th>Total Tagihan</th>
                             <th>Status Verifikasi</th>
                             <th class="text-center">Aksi</th>
@@ -126,7 +191,7 @@ $pesanan_opt = mysqli_query($conn, "SELECT p.id, p.total, u.username FROM pesana
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="bg-light p-2 rounded-circle text-primary d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-                                        <i class="fa fa-receipt"></i>
+                                        <i class="fa fa-receipt text-gold"></i>
                                     </div>
                                     #<?= htmlspecialchars($d['pesanan_id']) ?>
                                 </div>
@@ -136,6 +201,15 @@ $pesanan_opt = mysqli_query($conn, "SELECT p.id, p.total, u.username FROM pesana
                                 <span class="text-dark fw-medium">
                                     <i class="fa fa-wallet me-1 text-muted"></i> <?= htmlspecialchars($d['metode']) ?>
                                 </span>
+                            </td>
+                            <td>
+                                <?php if ($d['bukti_pembayaran'] != "" && file_exists('../upload/' . $d['bukti_pembayaran'])) { ?>
+                                    <button type="button" class="btn btn-sm btn-light border rounded-pill px-3 py-1" onclick="showProofModal('<?= '../upload/' . htmlspecialchars($d['bukti_pembayaran']) ?>')">
+                                        <i class="fa fa-image text-gold"></i> Lihat
+                                    </button>
+                                <?php } else { ?>
+                                    <span class="text-muted small">-</span>
+                                <?php } ?>
                             </td>
                             <td>
                                 <span class="fw-bold">
@@ -163,13 +237,13 @@ $pesanan_opt = mysqli_query($conn, "SELECT p.id, p.total, u.username FROM pesana
                         <!-- MODAL EDIT -->
                         <div class="modal fade" id="edit<?= $d['id'] ?>" tabindex="-1">
                             <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <form method="POST">
-                                        <div class="modal-header">
+                                <div class="modal-content" style="border-radius: 22px; border: none; overflow: hidden;">
+                                    <form method="POST" enctype="multipart/form-data">
+                                        <div class="modal-header p-4">
                                             <h5 class="modal-title fw-bold">Edit Pembayaran #<?= $d['id'] ?></h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
-                                        <div class="modal-body text-start">
+                                        <div class="modal-body text-start p-4">
                                             <input type="hidden" name="id" value="<?= $d['id'] ?>">
                                             
                                             <div class="mb-3">
@@ -200,8 +274,20 @@ $pesanan_opt = mysqli_query($conn, "SELECT p.id, p.total, u.username FROM pesana
                                                     <option value="lunas" <?= $d['status']=='lunas'?'selected':'' ?>>Lunas</option>
                                                 </select>
                                             </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label-muted">Upload Bukti Pembayaran Baru</label>
+                                                <?php if ($d['bukti_pembayaran'] != "" && file_exists('../upload/' . $d['bukti_pembayaran'])) { ?>
+                                                    <div class="mb-2 text-center">
+                                                        <small class="text-muted d-block text-start mb-1">Bukti Saat Ini:</small>
+                                                        <img src="<?= '../upload/' . htmlspecialchars($d['bukti_pembayaran']) ?>" alt="Bukti" class="rounded-3 border img-fluid" style="max-height: 120px; object-fit: contain;">
+                                                    </div>
+                                                <?php } ?>
+                                                <input type="file" name="bukti_pembayaran" class="form-control" accept="image/*">
+                                                <small class="text-muted" style="font-size: 0.75rem;">Kosongkan jika tidak ingin mengganti berkas bukti.</small>
+                                            </div>
                                         </div>
-                                        <div class="modal-footer">
+                                        <div class="modal-footer p-4">
                                             <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
                                             <button type="submit" name="edit" class="btn btn-premium-primary">Simpan Perubahan</button>
                                         </div>
@@ -220,13 +306,13 @@ $pesanan_opt = mysqli_query($conn, "SELECT p.id, p.total, u.username FROM pesana
     <!-- MODAL TAMBAH -->
     <div class="modal fade" id="tambah" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form method="POST">
-                    <div class="modal-header">
+            <div class="modal-content" style="border-radius: 22px; border: none; overflow: hidden;">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="modal-header p-4">
                         <h5 class="modal-title fw-bold">Tambah Pembayaran Baru</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="modal-body text-start">
+                    <div class="modal-body text-start p-4">
                         <div class="mb-3">
                             <label class="form-label-muted">Pilih Pesanan</label>
                             <select name="pesanan_id" class="form-select" required>
@@ -256,8 +342,13 @@ $pesanan_opt = mysqli_query($conn, "SELECT p.id, p.total, u.username FROM pesana
                                 <option value="lunas">Lunas</option>
                             </select>
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-muted">Upload Bukti Pembayaran</label>
+                            <input type="file" name="bukti_pembayaran" class="form-control" accept="image/*">
+                        </div>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer p-4">
                         <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" name="tambah" class="btn btn-premium-primary">Simpan Data</button>
                     </div>
@@ -266,9 +357,37 @@ $pesanan_opt = mysqli_query($conn, "SELECT p.id, p.total, u.username FROM pesana
         </div>
     </div>
 
+    <!-- MODAL PREVIEW BUKTI -->
+    <div class="modal fade" id="modalBukti" tabindex="-1" aria-labelledby="modalBuktiLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 22px; border: none; overflow: hidden; background: #ffffff; box-shadow: 0 15px 50px rgba(0,0,0,0.15);">
+                <div class="modal-header p-4" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                    <h5 class="modal-title fw-bold text-dark" id="modalBuktiLabel"><i class="fa fa-file-invoice text-gold me-2"></i>Bukti Pembayaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-4" style="background: #F8F9FA;">
+                    <img id="imgBuktiFull" src="" alt="Bukti Pembayaran" class="img-fluid rounded-4 shadow-sm" style="max-height: 450px; object-fit: contain; border: 1px solid rgba(0,0,0,0.08);">
+                </div>
+                <div class="modal-footer p-4" style="border-top: 1px solid rgba(0,0,0,0.05); justify-content: center;">
+                    <a id="btnDownloadBukti" href="" download class="btn-premium-primary px-4 justify-content-center">
+                        <i class="fa fa-download"></i> Unduh Gambar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+    // Modal Bukti Pembayaran
+    function showProofModal(imgPath) {
+        document.getElementById('imgBuktiFull').src = imgPath;
+        document.getElementById('btnDownloadBukti').href = imgPath;
+        const modal = new bootstrap.Modal(document.getElementById('modalBukti'));
+        modal.show();
+    }
+
     function konfirmasiHapus(url) {
         Swal.fire({
             title: 'Yakin hapus data ini?',

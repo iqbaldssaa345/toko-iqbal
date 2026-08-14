@@ -17,6 +17,7 @@ if(isset($_POST['tambah'])){
     $nama = mysqli_real_escape_string($conn,$_POST['nama']);
     $des = mysqli_real_escape_string($conn,$_POST['deskripsi']);
     $harga = intval($_POST['harga']);
+    $pre_order = mysqli_real_escape_string($conn,$_POST['pre_order']);
 
     $gambar = $_FILES['gambar']['name'];
     $tmp = $_FILES['gambar']['tmp_name'];
@@ -25,8 +26,8 @@ if(isset($_POST['tambah'])){
         move_uploaded_file($tmp,"../upload/".$gambar);
     }
 
-    mysqli_query($conn,"INSERT INTO produk (nama,deskripsi,harga,gambar)
-    VALUES('$nama','$des','$harga','$gambar')");
+    mysqli_query($conn,"INSERT INTO produk (nama,deskripsi,harga,gambar,pre_order)
+    VALUES('$nama','$des','$harga','$gambar','$pre_order')");
 
     header("location:produk.php?pesan=sukses_tambah");
     exit;
@@ -50,6 +51,7 @@ if(isset($_POST['edit'])){
     $nama = mysqli_real_escape_string($conn,$_POST['nama']);
     $des = mysqli_real_escape_string($conn,$_POST['deskripsi']);
     $harga = intval($_POST['harga']);
+    $pre_order = mysqli_real_escape_string($conn,$_POST['pre_order']);
 
     if(!empty($_FILES['gambar']['name'])){
         $gambar = $_FILES['gambar']['name'];
@@ -61,13 +63,15 @@ if(isset($_POST['edit'])){
         nama='$nama',
         deskripsi='$des',
         harga='$harga',
-        gambar='$gambar'
+        gambar='$gambar',
+        pre_order='$pre_order'
         WHERE id='$id'");
     }else{
         mysqli_query($conn,"UPDATE produk SET
         nama='$nama',
         deskripsi='$des',
-        harga='$harga'
+        harga='$harga',
+        pre_order='$pre_order'
         WHERE id='$id'");
     }
 
@@ -140,6 +144,7 @@ $data = mysqli_query($conn,"SELECT * FROM produk ORDER BY id ASC");
                             <th>Nama Produk</th>
                             <th>Deskripsi</th>
                             <th>Harga Satuan</th>
+                            <th class="text-center">Status Pre-Order</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -168,6 +173,9 @@ $data = mysqli_query($conn,"SELECT * FROM produk ORDER BY id ASC");
                             </td>
                             <td>
                                 <span class="price-badge">Rp <?= number_format($d['harga'], 0, ',', '.') ?></span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-warning text-dark" style="font-size: 0.9rem; padding: 6px 12px; border-radius: 30px;"><i class="fa fa-clock me-1"></i> Pre-Order: <?= htmlspecialchars($d['pre_order']) ?></span>
                             </td>
                             <td class="text-center">
                                 <button class="btn-action-premium btn-edit-premium me-1" data-bs-toggle="modal" data-bs-target="#edit<?= $d['id'] ?>" title="Edit">
@@ -206,6 +214,11 @@ $data = mysqli_query($conn,"SELECT * FROM produk ORDER BY id ASC");
                                             <div class="mb-3">
                                                 <label class="form-label-muted">Harga (Rp)</label>
                                                 <input type="number" name="harga" class="form-control" value="<?= $d['harga'] ?>" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label-muted">Estimasi Pre-Order</label>
+                                                <input type="text" name="pre_order" class="form-control" value="<?= htmlspecialchars($d['pre_order']) ?>" placeholder="Contoh: 1 Hari, 2 Hari" required>
                                             </div>
 
                                             <div class="mb-3">
@@ -266,6 +279,11 @@ $data = mysqli_query($conn,"SELECT * FROM produk ORDER BY id ASC");
                         <div class="mb-3">
                             <label class="form-label-muted">Harga (Rp)</label>
                             <input type="number" name="harga" class="form-control" placeholder="Contoh: 25000" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-muted">Estimasi Pre-Order</label>
+                            <input type="text" name="pre_order" class="form-control" placeholder="Contoh: 1 Hari, 2 Hari" value="1 Hari" required>
                         </div>
 
                         <div class="mb-3">

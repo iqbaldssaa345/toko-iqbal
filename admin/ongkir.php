@@ -16,9 +16,11 @@ $nama_admin = $d_admin['username'];
 if(isset($_POST['tambah'])){
     $jasa = mysqli_real_escape_string($conn,$_POST['nama_jasa']);
     $biaya = intval($_POST['biaya']);
+    $estimasi = mysqli_real_escape_string($conn,$_POST['estimasi']);
+    if(empty($estimasi)) $estimasi = "1-2 Hari";
 
-    mysqli_query($conn,"INSERT INTO ongkir (nama_jasa,biaya)
-    VALUES('$jasa','$biaya')");
+    mysqli_query($conn,"INSERT INTO ongkir (nama_jasa,biaya,estimasi)
+    VALUES('$jasa','$biaya','$estimasi')");
 
     header("Location: ongkir.php?pesan=sukses_tambah");
     exit;
@@ -38,10 +40,13 @@ if(isset($_POST['edit'])){
     $id = intval($_POST['id']);
     $jasa = mysqli_real_escape_string($conn,$_POST['nama_jasa']);
     $biaya = intval($_POST['biaya']);
+    $estimasi = mysqli_real_escape_string($conn,$_POST['estimasi']);
+    if(empty($estimasi)) $estimasi = "1-2 Hari";
 
     mysqli_query($conn,"UPDATE ongkir SET
     nama_jasa='$jasa',
-    biaya='$biaya'
+    biaya='$biaya',
+    estimasi='$estimasi'
     WHERE id='$id'");
 
     header("Location: ongkir.php?pesan=sukses_edit");
@@ -162,23 +167,41 @@ $total = mysqli_num_rows($data);
                             <th class="text-center" width="8%">No</th>
                             <th>Jasa Pengiriman</th>
                             <th>Biaya Pengiriman</th>
+                            <th>Estimasi Waktu</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $no=1; while($d = mysqli_fetch_array($data)){ ?>
+                        <?php $no=1; while($d = mysqli_fetch_array($data)){ 
+                            $est_val = isset($d['estimasi']) && !empty($d['estimasi']) ? $d['estimasi'] : '1-2 Hari';
+                            
+                            $icon = 'fa-motorcycle';
+                            $nama_lower = strtolower($d['nama_jasa']);
+                            if(strpos($nama_lower, 'mobil') !== false || strpos($nama_lower, 'cargo') !== false || strpos($nama_lower, 'bulk') !== false) {
+                                $icon = 'fa-truck-field';
+                            } elseif(strpos($nama_lower, 'jne') !== false || strpos($nama_lower, 'j&t') !== false || strpos($nama_lower, 'sicepat') !== false) {
+                                $icon = 'fa-box-archive';
+                            } elseif(strpos($nama_lower, 'gosend') !== false || strpos($nama_lower, 'grab') !== false) {
+                                $icon = 'fa-bolt';
+                            }
+                        ?>
                         <tr>
                             <td class="text-center fw-bold text-muted"><?= $no++ ?></td>
                             <td>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="bg-light p-2 rounded-circle text-info d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
-                                        <i class="fa fa-motorcycle"></i>
+                                        <i class="fa <?= $icon ?>"></i>
                                     </div>
-                                    <span class="price-badge" style="background-color:#eef2f7; color:#243b55;"><?= htmlspecialchars($d['nama_jasa']) ?></span>
+                                    <span class="price-badge" style="background-color:#eef2f7; color:#243b55; font-weight:600;"><?= htmlspecialchars($d['nama_jasa']) ?></span>
                                 </div>
                             </td>
                             <td>
                                 <div class="fw-bold text-dark">Rp <?= number_format($d['biaya'], 0, ',', '.') ?></div>
+                            </td>
+                            <td>
+                                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+                                    <i class="fa fa-clock me-1"></i> <?= htmlspecialchars($est_val) ?>
+                                </span>
                             </td>
                             <td class="text-center">
                                 <button class="btn-action-premium btn-edit-premium me-1" data-bs-toggle="modal" data-bs-target="#edit<?= $d['id'] ?>" title="Edit">
@@ -212,6 +235,11 @@ $total = mysqli_num_rows($data);
                                             <div class="mb-3">
                                                 <label class="form-label-muted">Biaya (Rp)</label>
                                                 <input type="number" name="biaya" class="form-control" value="<?= $d['biaya'] ?>" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label-muted">Estimasi Pengiriman (Hari)</label>
+                                                <input type="text" name="estimasi" class="form-control" value="<?= htmlspecialchars($est_val) ?>" placeholder="Contoh: 1 Hari, 1-2 Hari, 2-3 Hari" required>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -253,6 +281,11 @@ $total = mysqli_num_rows($data);
                         <div class="mb-3">
                             <label class="form-label-muted">Biaya (Rp)</label>
                             <input type="number" name="biaya" class="form-control" placeholder="Contoh: 15000" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-muted">Estimasi Pengiriman (Hari)</label>
+                            <input type="text" name="estimasi" class="form-control" placeholder="Contoh: 1 Hari, 1-2 Hari" value="1-2 Hari" required>
                         </div>
                     </div>
                     <div class="modal-footer">

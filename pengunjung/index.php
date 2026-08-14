@@ -180,8 +180,14 @@ $nama_pengunjung = $d_pengunjung['username'];
                         <h5><?= htmlspecialchars($d['nama']) ?></h5>
                         <p><?= htmlspecialchars($d['deskripsi']) ?></p>
 
-                        <div class="price-badge mb-3">
+                        <div class="price-badge mb-2">
                             Rp <?= number_format($d['harga'], 0, ',', '.') ?>
+                        </div>
+
+                        <div class="mb-3" style="font-size: 0.85rem;">
+                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle py-2 px-3 rounded-pill">
+                                <i class="fa fa-clock me-1"></i> Pre-Order: <?= htmlspecialchars($d['pre_order']) ?>
+                            </span>
                         </div>
 
                         <a href="pesan.php?id=<?= $d['id'] ?>" class="btn-premium-primary btn-beli justify-content-center">

@@ -2,18 +2,21 @@
    CSS Dashboard Premium - Catering Ibu Iqbal
    Desain Responsif, Modern, Glassmorphism, & Ringan
    ========================================== */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
     --gold: #D4AF37;
     --gold-dark: #AA8C2C;
-    --gold-light: rgba(212, 175, 55, 0.15);
-    --dark: #1A1A1D;
-    --dark-medium: #242428;
-    --sidebar-bg: linear-gradient(180deg, #1A1A1D 0%, #2D2D30 100%);
-    --bg-light: #F8F9FA;
-    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-    --hover-shadow: 0 15px 35px rgba(212, 175, 55, 0.12);
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --gold-light: rgba(212, 175, 55, 0.12);
+    --gold-glow: rgba(212, 175, 55, 0.35);
+    --dark: #0F0F11;
+    --dark-medium: #1A1A1D;
+    --dark-light: #242428;
+    --sidebar-bg: linear-gradient(180deg, #0F0F11 0%, #1E1E22 100%);
+    --bg-light: #F6F5F2;
+    --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+    --hover-shadow: 0 20px 40px rgba(212, 175, 55, 0.08);
+    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
@@ -42,21 +45,23 @@ body {
     background: var(--sidebar-bg);
     color: white;
     padding: 30px 20px;
-    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.2);
     z-index: 1050;
     display: flex;
     flex-direction: column;
     transition: var(--transition);
+    border-right: 1px solid rgba(212, 175, 55, 0.08);
 }
 
 .sidebar-brand {
     text-align: center;
     margin-bottom: 40px;
     padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.12);
 }
 
 .sidebar-brand h4 {
+    font-family: 'Playfair Display', serif;
     font-weight: 700;
     font-size: 1.35rem;
     letter-spacing: 1px;
@@ -106,10 +111,10 @@ body {
 }
 
 .sidebar-menu a.active {
-    background: var(--gold);
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
     color: var(--dark) !important;
     font-weight: 600;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.25);
 }
 
 .sidebar-menu a.active i {
@@ -272,9 +277,21 @@ body {
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
-.stat-card-bg-1 { background: linear-gradient(135deg, #1a2a6c, #275d8c); }
-.stat-card-bg-2 { background: linear-gradient(135deg, #e65c00, #f9d423); }
-.stat-card-bg-3 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.stat-card-bg-1 { 
+    background: linear-gradient(135deg, #1A1A1D 0%, #2D2D35 100%); 
+    border: 1.5px solid rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+.stat-card-bg-2 { 
+    background: linear-gradient(135deg, #251B05 0%, #443310 100%); 
+    border: 1.5px solid rgba(212, 175, 55, 0.25) !important;
+    box-shadow: 0 12px 35px rgba(212, 175, 55, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+.stat-card-bg-3 { 
+    background: linear-gradient(135deg, #0A1C16 0%, #16362C 100%); 
+    border: 1.5px solid rgba(56, 239, 125, 0.18) !important;
+    box-shadow: 0 12px 35px rgba(56, 239, 125, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
 
 .stat-card-val {
     font-size: 2.6rem;
@@ -390,7 +407,7 @@ body {
 
 /* BUTTONS */
 .btn-premium-primary {
-    background: var(--gold);
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
     color: var(--dark) !important;
     border: none;
     border-radius: 30px;
@@ -402,14 +419,14 @@ body {
     gap: 8px;
     text-decoration: none;
     transition: var(--transition);
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
+    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.25);
 }
 
 .btn-premium-primary:hover {
-    background: var(--dark);
-    color: var(--gold) !important;
+    background: linear-gradient(135deg, #ffffff 0%, #f1e2c3 100%);
+    color: var(--dark) !important;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(26, 26, 29, 0.25);
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.35);
 }
 
 .btn-premium-secondary {

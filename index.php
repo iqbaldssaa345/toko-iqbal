@@ -44,9 +44,12 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
         :root {
             --gold: #D4AF37;
             --gold-dark: #AA8C2C;
-            --dark: #1A1A1D;
-            --light: #F9F6F0;
+            --gold-light: rgba(212, 175, 55, 0.12);
+            --gold-glow: rgba(212, 175, 55, 0.35);
+            --dark: #0F0F11;
+            --light: #F6F5F2;
             --white: #FFFFFF;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
@@ -75,16 +78,18 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
             justify-content: space-between;
             align-items: center;
             padding: 25px 8%;
-            transition: all 0.4s ease;
+            transition: var(--transition);
             z-index: 1000;
             background: transparent;
         }
 
         .navbar.scrolled {
-            background: rgba(26, 26, 29, 0.95);
-            padding: 15px 8%;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
+            background: rgba(15, 15, 17, 0.92);
+            padding: 18px 8%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
         }
 
         .brand-name {
@@ -93,10 +98,12 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
             color: var(--white);
             text-decoration: none;
             letter-spacing: 1px;
+            transition: var(--transition);
         }
 
         .navbar.scrolled .brand-name {
             color: var(--gold);
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
         }
 
         .nav-links {
@@ -112,7 +119,7 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
             font-weight: 400;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            transition: color 0.3s;
+            transition: var(--transition);
             position: relative;
         }
 
@@ -124,7 +131,7 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
             bottom: -5px;
             left: 0;
             background-color: var(--gold);
-            transition: width 0.3s;
+            transition: var(--transition);
         }
 
         .nav-links a:not(.btn-gold):not(.btn-gold-filled):hover::after {
@@ -140,36 +147,43 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
             border: 1px solid var(--gold);
             color: var(--gold) !important;
             padding: 10px 24px;
-            border-radius: 0;
-            transition: all 0.3s ease !important;
+            border-radius: 30px;
+            transition: var(--transition) !important;
+            font-weight: 500;
         }
 
         .btn-gold:hover {
-            background: var(--gold);
-            color: var(--white) !important;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: var(--dark) !important;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+            border-color: transparent;
         }
 
         .btn-gold-filled {
-            background: var(--gold);
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
             border: 1px solid var(--gold);
-            color: var(--white) !important;
+            color: var(--dark) !important;
             padding: 10px 24px;
-            border-radius: 0;
-            transition: all 0.3s ease !important;
+            border-radius: 30px;
+            transition: var(--transition) !important;
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.25);
         }
 
         .btn-gold-filled:hover {
-            background: transparent;
-            color: var(--gold) !important;
+            background: linear-gradient(135deg, #ffffff 0%, #f1e2c3 100%);
+            color: var(--dark) !important;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35);
+            border-color: transparent;
         }
 
         /* HERO */
         .hero {
             height: 100vh;
-            background: linear-gradient(rgba(26, 26, 29, 0.7), rgba(26, 26, 29, 0.8)), url('https://i.pinimg.com/736x/d1/1d/62/d11d62838e3facfa6e3c030fa975c6d0.jpg') center/cover fixed;
+            background: linear-gradient(rgba(15, 15, 17, 0.75), rgba(15, 15, 17, 0.85)), url('https://i.pinimg.com/736x/d1/1d/62/d11d62838e3facfa6e3c030fa975c6d0.jpg') center/cover fixed;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -199,6 +213,9 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
             line-height: 1.2;
             animation: fadeInUp 1s ease 0.3s forwards;
             opacity: 0;
+            background: linear-gradient(135deg, #ffffff 20%, #f4e3c1 60%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero-desc {
@@ -213,21 +230,26 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
         .hero-btn {
             display: inline-block;
             padding: 15px 40px;
-            background: var(--gold);
-            color: var(--white);
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: var(--dark);
             text-decoration: none;
             font-size: 16px;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 2px;
-            border: 1px solid var(--gold);
-            transition: all 0.4s;
+            border-radius: 40px;
+            border: none;
+            transition: var(--transition);
             animation: fadeInUp 1s ease 0.9s forwards;
             opacity: 0;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
         }
 
         .hero-btn:hover {
-            background: transparent;
-            color: var(--gold);
+            background: linear-gradient(135deg, #ffffff 0%, #f1e2c3 100%);
+            color: var(--dark);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.45);
         }
 
         @keyframes fadeInUp {
@@ -288,8 +310,14 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
         }
         .about-image img {
             width: 100%;
-            border-radius: 5px;
-            box-shadow: -20px 20px 0px rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            box-shadow: -20px 20px 0px rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            transition: var(--transition);
+        }
+        .about-image img:hover {
+            transform: translate(5px, -5px);
+            box-shadow: -25px 25px 30px rgba(212, 175, 55, 0.22);
         }
 
         /* DISCOVER */
@@ -316,12 +344,12 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
             content: '';
             position: absolute;
             inset: 0;
-            background: rgba(26, 26, 29, 0.4);
-            transition: all 0.5s;
+            background: rgba(15, 15, 17, 0.4);
+            transition: var(--transition);
         }
 
         .discover-item:hover::before {
-            background: rgba(26, 26, 29, 0.1);
+            background: rgba(15, 15, 17, 0.15);
         }
 
         .discover-item h3 {
@@ -331,16 +359,19 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
             font-weight: 600;
             letter-spacing: 2px;
             z-index: 2;
-            transition: all 0.5s;
+            transition: var(--transition);
+            font-family: 'Playfair Display', serif;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
         .discover-item:hover h3 {
-            transform: scale(1.1);
+            transform: scale(1.08);
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
         }
 
         /* PRODUK */
         .produk {
-            background: var(--white);
+            background: #FAF9F6;
         }
 
         .grid {
@@ -350,16 +381,19 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
         }
 
         .card {
-            background: var(--light);
-            border: 1px solid #EAEAEA;
-            transition: all 0.4s;
+            background: var(--white);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: 16px;
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         }
 
         .card:hover {
-            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
-            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.25);
+            transform: translateY(-8px);
         }
 
         .card-img-wrapper {
@@ -373,11 +407,11 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: all 0.6s;
+            transition: var(--transition);
         }
 
         .card:hover .card-img-wrapper img {
-            transform: scale(1.08);
+            transform: scale(1.06);
         }
 
         .card-body {
@@ -411,25 +445,28 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
             background: transparent;
             color: var(--dark);
             border: 1px solid var(--dark);
+            border-radius: 30px;
             text-decoration: none;
             text-transform: uppercase;
             font-size: 13px;
+            font-weight: 600;
             letter-spacing: 1px;
-            transition: all 0.3s;
+            transition: var(--transition);
         }
 
         .buy-btn:hover {
-            background: var(--gold);
-            border-color: var(--gold);
-            color: var(--white);
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            border-color: transparent;
+            color: var(--dark);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.25);
         }
 
         /* FOOTER */
         .footer {
-            background: #111112;
+            background: #0F0F11;
             color: #a0a0a5;
             padding: 80px 8% 40px;
-            border-top: 2px solid var(--gold);
+            border-top: 1px solid rgba(212, 175, 55, 0.25);
         }
 
         .footer-content {
@@ -468,22 +505,23 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.15);
             color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1rem;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         .social-links a:hover {
-            background: var(--gold);
-            color: #111112;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: var(--dark);
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35);
+            border-color: transparent;
         }
 
         .footer-bottom {
@@ -525,6 +563,8 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
         <div class="nav-links">
             <a href="#about">Tentang Kami</a>
             <a href="#produk">Menu</a>
+            <a href="#testimoni">Testimoni</a>
+            <a href="#lokasi">Lokasi</a>
             <?php if($logged_in){ ?>
                 <a href="<?= $dashboard_url ?>" class="btn-gold-filled"><i class="fa fa-user"></i> <?= htmlspecialchars($username_session) ?></a>
             <?php } else { ?>
@@ -599,6 +639,13 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
                     <h3><?= htmlspecialchars($d['nama']); ?></h3>
                     <p><?= htmlspecialchars($d['deskripsi']); ?></p>
                     <div class="price">Rp <?= number_format($d['harga'], 0, ',', '.'); ?></div>
+                    
+                    <div class="mb-3" style="font-size: 0.9rem;">
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle py-2 px-3 rounded-pill">
+                            <i class="fa fa-clock me-1"></i> Pre-Order: <?= htmlspecialchars($d['pre_order']) ?>
+                        </span>
+                    </div>
+
                     <?php if($logged_in) { ?>
                         <a href="<?= $_SESSION['role'] == 'pengunjung' ? 'pengunjung/pesan.php?id='.$d['id'] : $dashboard_url ?>" class="buy-btn">Pesan Sekarang</a>
                     <?php } else { ?>
@@ -607,6 +654,93 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
                 </div>
             </div>
             <?php } ?>
+        </div>
+    </section>
+
+    </section>
+ 
+    <!-- TESTIMONI PELANGGAN -->
+    <section class="section-padding" id="testimoni" style="background: #fafafa; border-top: 1px solid rgba(212, 175, 55, 0.15);">
+        <div class="section-title">
+            <h2>Testimoni Pelanggan</h2>
+            <div class="separator"></div>
+        </div>
+        <div style="max-width: 1100px; margin: 0 auto; padding: 0 20px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <?php
+                $q_testi = mysqli_query($conn, "
+                    SELECT t.*, u.username 
+                    FROM testimoni t
+                    JOIN users u ON t.user_id = u.id
+                    ORDER BY t.tanggal DESC LIMIT 3
+                ");
+                if(mysqli_num_rows($q_testi) > 0) {
+                    while($testi = mysqli_fetch_array($q_testi)) {
+                ?>
+                <div class="card" style="padding: 30px; text-align: left; background: #ffffff; border-radius: 16px; border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <span style="font-weight: 600; color: var(--dark); font-size: 1.1rem;"><i class="fa fa-user-circle text-gold me-2"></i> <?= htmlspecialchars($testi['username']) ?></span>
+                        <span class="text-muted small"><?= date('d M Y', strtotime($testi['tanggal'])) ?></span>
+                    </div>
+                    <div style="color: #ffac0a; margin-bottom: 15px; font-size: 0.95rem;">
+                        <?php 
+                        $stars = intval($testi['bintang']);
+                        for($i=1; $i<=5; $i++) {
+                            if($i <= $stars) {
+                                echo '<i class="fa fa-star"></i>';
+                            } else {
+                                echo '<i class="fa-regular fa-star"></i>';
+                            }
+                        }
+                        ?>
+                    </div>
+                    <p style="color: #555; font-size: 0.95rem; font-style: italic; line-height: 1.6;">"<?= htmlspecialchars($testi['isi_testimoni']) ?>"</p>
+                </div>
+                <?php 
+                    }
+                } else {
+                ?>
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #777;">
+                    <i class="fa-regular fa-comment-dots fa-3x text-gold-dark mb-3" style="font-size: 3rem; color: var(--gold);"></i>
+                    <p>Belum ada testimoni. Jadilah yang pertama memberikan ulasan melalui panel pelanggan!</p>
+                </div>
+                <?php } ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOKASI & KONTAK KAMI -->
+    <section class="section-padding" id="lokasi" style="background: #ffffff; border-top: 1px solid rgba(212, 175, 55, 0.15);">
+        <div class="section-title">
+            <h2>Lokasi & Kontak Kami</h2>
+            <div class="separator"></div>
+        </div>
+        <div style="max-width: 1100px; margin: 0 auto; padding: 0 20px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 50px; align-items: center;">
+                <div style="flex: 1.2; min-width: 320px;">
+                    <div style="position: relative; overflow: hidden; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); border: 1px solid rgba(212, 175, 55, 0.2);">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.2828359740597!2d106.84072227448888!3d-6.485811793505708!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69c11579ff100d%3A0xe968b556b1b51e04!2sPuri%20Nirwana%201%2C%20Cibinong%2C%20Bogor%20Regency%2C%20West%20Java!5e0!3m2!1sen!2sid!4v1720850000000!5m2!1sen!2sid" width="100%" height="380" style="border:0; display: block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+                <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px;">
+                    <div>
+                        <h3 style="font-size: 22px; color: var(--dark); margin-bottom: 12px; font-family: 'Playfair Display', serif;"><i class="fa-solid fa-map-location-dot text-gold me-2"></i> Kunjungi Outlet Kami</h3>
+                        <p style="color: #666; font-size: 15px; line-height: 1.6; margin-bottom: 12px;">Kami berlokasi di area strategis Cibinong. Datang langsung untuk berkonsultasi mengenai menu acara khusus Anda atau mencicipi tester menu kami.</p>
+                        <p style="color: var(--dark); font-weight: 600; font-size: 15px;"><i class="fa-solid fa-map-marker-alt text-gold me-2"></i> Jalan Puri Nirwana 1, Cibinong, Bogor, Jawa Barat</p>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 16px; color: var(--dark); margin-bottom: 6px; font-weight: 600;"><i class="fa-solid fa-clock text-gold me-2"></i> Jam Operasional</h4>
+                        <p style="color: #666; font-size: 14px;">Setiap Hari: 08:00 - 21:00 WIB</p>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 16px; color: var(--dark); margin-bottom: 10px; font-weight: 600;"><i class="fa-solid fa-comments text-gold me-2"></i> Hubungi Langsung</h4>
+                        <div style="display: flex; gap: 12px;">
+                            <a href="https://wa.me/6281234567890" target="_blank" class="btn-gold-filled" style="padding: 10px 20px; text-decoration: none; font-size: 14px;"><i class="fa-brands fa-whatsapp me-2"></i> WhatsApp</a>
+                            <a href="tel:+6281234567890" class="btn-gold" style="padding: 10px 20px; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-phone me-2"></i> Telepon</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -632,6 +766,8 @@ if(isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['
                 <h4>Menu Cepat</h4>
                 <p><a href="#about" style="color:#999;text-decoration:none;">Tentang Kami</a></p>
                 <p><a href="#produk" style="color:#999;text-decoration:none;">Menu Eksklusif</a></p>
+                <p><a href="#testimoni" style="color:#999;text-decoration:none;">Testimoni Pelanggan</a></p>
+                <p><a href="#lokasi" style="color:#999;text-decoration:none;">Lokasi Outlet</a></p>
                 <?php if($logged_in) { ?>
                     <p><a href="<?= $dashboard_url ?>" style="color:#999;text-decoration:none;">Dashboard Anda</a></p>
                 <?php } else { ?>

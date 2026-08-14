@@ -55,6 +55,8 @@ if(isset($_POST['simpan']) || isset($_POST['action'])){
 
         /* UPDATE */
         if($edit_id > 0){
+            $cek_dp = mysqli_query($conn,"SELECT * FROM detail_pesanan WHERE pesanan_id='$edit_id' AND produk_id='$id'");
+            
             mysqli_query($conn,"UPDATE pesanan SET
                 alamat_id='$alamat_id',
                 ongkir_id='$ongkir_id',
@@ -63,7 +65,6 @@ if(isset($_POST['simpan']) || isset($_POST['action'])){
             ");
             
             $subtotal = $produk['harga'] * $jumlah;
-            $cek_dp = mysqli_query($conn,"SELECT * FROM detail_pesanan WHERE pesanan_id='$edit_id' AND produk_id='$id'");
             if(mysqli_num_rows($cek_dp) > 0){
                 mysqli_query($conn,"UPDATE detail_pesanan SET jumlah='$jumlah', subtotal='$subtotal' WHERE pesanan_id='$edit_id' AND produk_id='$id'");
             } else {
@@ -103,6 +104,7 @@ if(isset($_POST['simpan']) || isset($_POST['action'])){
    ========================= */
 if(isset($_GET['hapus'])){
     $hapus = intval($_GET['hapus']);
+    
     mysqli_query($conn,"DELETE FROM detail_pesanan WHERE pesanan_id='$hapus'");
     mysqli_query($conn,"DELETE FROM pembayaran WHERE pesanan_id='$hapus'");
     mysqli_query($conn,"DELETE FROM pesanan WHERE id='$hapus' AND user_id='$user_id'");
@@ -601,11 +603,11 @@ ORDER BY p.id DESC
                                 <div class="shopee-spec-value shopee-shipping-details">
                                     <div class="shopee-shipping-main">
                                         <i class="fa fa-truck-fast"></i> 
-                                        <span><?= date('d M', strtotime('+2 days')); ?></span>
+                                        <span>Estimasi Tiba: <?= date('d M', strtotime('+2 days')); ?> (1-2 Hari)</span>
                                         <i class="fa fa-chevron-right small text-muted"></i>
                                     </div>
                                     <div class="shopee-shipping-sub">
-                                        Dapatkan Voucher s/d Rp10.000 jika pesanan terlambat.
+                                        Pengiriman cepat dan terjamin ke alamat tujuan Anda.
                                     </div>
                                 </div>
 
@@ -638,9 +640,11 @@ ORDER BY p.id DESC
                                 <div class="shopee-spec-value">
                                     <select name="ongkir_id" class="shopee-select-box" required>
                                         <option value="">-- Pilih Jasa Kurir --</option>
-                                        <?php mysqli_data_seek($ongkir, 0); while($o = mysqli_fetch_array($ongkir)){ ?>
+                                        <?php mysqli_data_seek($ongkir, 0); while($o = mysqli_fetch_array($ongkir)){ 
+                                            $o_est = isset($o['estimasi']) && !empty($o['estimasi']) ? $o['estimasi'] : '1-2 Hari';
+                                        ?>
                                         <option value="<?= $o['id'] ?>" <?= ($edit_data && $edit_data['ongkir_id']==$o['id'])?'selected':'' ?>>
-                                            <?= htmlspecialchars($o['nama_jasa']) ?> - Rp <?= number_format($o['biaya'], 0, ',', '.') ?>
+                                            <?= htmlspecialchars($o['nama_jasa']) ?> - Rp <?= number_format($o['biaya'], 0, ',', '.') ?> (Estimasi: <?= htmlspecialchars($o_est) ?>)
                                         </option>
                                         <?php } ?>
                                     </select>
@@ -651,15 +655,17 @@ ORDER BY p.id DESC
                                 <div class="shopee-spec-value d-flex align-items-center">
                                     <div class="shopee-quantity-control">
                                         <button type="button" class="shopee-quantity-btn" onclick="decreaseQty()"><i class="fa fa-minus"></i></button>
-                                        <input type="number" id="qty-input" name="jumlah" class="shopee-quantity-input" 
-                                               value="<?= $edit_data && isset($edit_data['jumlah']) ? $edit_data['jumlah'] : (isset($_GET['jumlah']) ? intval($_GET['jumlah']) : 1) ?>" 
-                                               min="1" required>
-                                        <button type="button" class="shopee-quantity-btn" onclick="increaseQty()"><i class="fa fa-plus"></i></button>
-                                    </div>
-                                    <div class="shopee-stock-info">
-                                        Tersedia Banyak
-                                    </div>
-                                </div>
+                                         <input type="number" id="qty-input" name="jumlah" class="shopee-quantity-input" 
+                                                value="<?= $edit_data && isset($edit_data['jumlah']) ? $edit_data['jumlah'] : (isset($_GET['jumlah']) ? intval($_GET['jumlah']) : 1) ?>" 
+                                                min="1" readonly required>
+                                         <button type="button" class="shopee-quantity-btn" onclick="increaseQty()"><i class="fa fa-plus"></i></button>
+                                     </div>
+                                     <div class="shopee-stock-info">
+                                         <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle py-2 px-3 rounded-pill">
+                                             <i class="fa fa-clock me-1"></i> Pre-Order: <?= htmlspecialchars($produk['pre_order']) ?>
+                                         </span>
+                                     </div>
+                                 </div>
 
                             </div>
 
@@ -760,7 +766,7 @@ ORDER BY p.id DESC
     
     function increaseQty() {
         let val = parseInt(qtyInput.value);
-        if (isNaN(val)) val = 1;
+        if (isNaN(val)) val = 0;
         qtyInput.value = val + 1;
     }
     

@@ -38,11 +38,13 @@ if(isset($_POST['daftar'])){
     :root {
         --gold: #D4AF37;
         --gold-dark: #AA8C2C;
-        --gold-light: rgba(212, 175, 55, 0.2);
-        --dark: #111112;
+        --gold-light: rgba(212, 175, 55, 0.12);
+        --gold-glow: rgba(212, 175, 55, 0.3);
+        --dark: #0F0F11;
         --white: #FFFFFF;
-        --glass-bg: rgba(17, 17, 18, 0.7);
-        --glass-border: rgba(212, 175, 55, 0.25);
+        --glass-bg: rgba(15, 15, 17, 0.78);
+        --glass-border: rgba(212, 175, 55, 0.2);
+        --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     * {
@@ -54,7 +56,7 @@ if(isset($_POST['daftar'])){
 
     body {
         min-height: 100vh;
-        background: linear-gradient(rgba(17, 17, 18, 0.82), rgba(17, 17, 18, 0.94)), 
+        background: linear-gradient(rgba(15, 15, 17, 0.8), rgba(15, 15, 17, 0.95)), 
                     url('https://i.pinimg.com/736x/d1/1d/62/d11d62838e3facfa6e3c030fa975c6d0.jpg') center/cover fixed;
         display: flex;
         align-items: center;
@@ -74,9 +76,9 @@ if(isset($_POST['daftar'])){
         -webkit-backdrop-filter: blur(20px);
         color: var(--white);
         text-align: center;
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 
-                    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-        animation: fadeUp 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 
+                    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+        animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     /* ANIMASI */
@@ -95,13 +97,14 @@ if(isset($_POST['daftar'])){
         align-items: center;
         justify-content: center;
         margin-bottom: 25px;
-        box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
-        transition: all 0.4s ease;
+        box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+        transition: var(--transition);
     }
 
     .logo-container:hover {
         transform: rotate(15deg) scale(1.05);
-        background: rgba(212, 175, 55, 0.3);
+        background: rgba(212, 175, 55, 0.25);
+        box-shadow: 0 8px 30px rgba(212, 175, 55, 0.3);
     }
 
     .logo-container i {
@@ -140,7 +143,7 @@ if(isset($_POST['daftar'])){
         transform: translateY(-50%);
         color: #8c8c93;
         font-size: 15px;
-        transition: 0.3s ease;
+        transition: var(--transition);
     }
 
     .input-box input {
@@ -152,7 +155,7 @@ if(isset($_POST['daftar'])){
         background: rgba(0, 0, 0, 0.35);
         color: var(--white);
         font-size: 14px;
-        transition: all 0.3s ease;
+        transition: var(--transition);
     }
 
     .input-box input::placeholder {
@@ -162,7 +165,7 @@ if(isset($_POST['daftar'])){
     .input-box input:focus {
         border-color: var(--gold);
         background: rgba(0, 0, 0, 0.55);
-        box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
     }
 
     .input-box:focus-within i.input-icon {
@@ -174,7 +177,7 @@ if(isset($_POST['daftar'])){
     input:-webkit-autofill:hover, 
     input:-webkit-autofill:focus, 
     input:-webkit-autofill:active {
-        -webkit-box-shadow: 0 0 0 1000px rgba(17, 17, 18, 0.95) inset !important;
+        -webkit-box-shadow: 0 0 0 1000px rgba(15, 15, 17, 0.95) inset !important;
         -webkit-text-fill-color: #ffffff !important;
         border: 1.5px solid rgba(212, 175, 55, 0.3) !important;
         transition: background-color 5000s ease-in-out 0s;
@@ -189,7 +192,7 @@ if(isset($_POST['daftar'])){
         cursor: pointer;
         color: #8c8c93;
         font-size: 15px;
-        transition: 0.3s ease;
+        transition: var(--transition);
         z-index: 10;
     }
     
@@ -211,15 +214,15 @@ if(isset($_POST['daftar'])){
         text-transform: uppercase;
         letter-spacing: 1.5px;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition);
         box-shadow: 0 8px 25px rgba(212, 175, 55, 0.25);
     }
 
     .btn-login:hover {
-        background: linear-gradient(135deg, var(--white) 0%, #e0e0e0 100%);
+        background: linear-gradient(135deg, #ffffff 0%, #f1e2c3 100%);
         color: var(--dark);
         transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(255, 255, 255, 0.15);
+        box-shadow: 0 12px 30px rgba(212, 175, 55, 0.35);
     }
 
     .btn-login:active {

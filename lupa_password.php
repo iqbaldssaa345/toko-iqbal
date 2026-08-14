@@ -3,54 +3,37 @@ session_start();
 include 'koneksi.php';
 
 $error = "";
+$success = "";
 
-if(isset($_POST['login'])){
-    $user = $_POST['username'];
-    $pass = $_POST['password'];
+if(isset($_POST['reset_password'])){
+    $user = trim($_POST['username']);
+    $new_pass = $_POST['new_password'];
+    $confirm_pass = $_POST['confirm_password'];
 
-    $data = mysqli_query($conn,"SELECT * FROM users WHERE username='$user'");
-    $cek = mysqli_num_rows($data);
-
-    if($cek > 0){
-        $d = mysqli_fetch_assoc($data);
+    if(empty($user) || empty($new_pass) || empty($confirm_pass)){
+        $error = "Semua bidang wajib diisi!";
+    } elseif($new_pass !== $confirm_pass){
+        $error = "Konfirmasi password tidak cocok!";
+    } elseif(strlen($new_pass) < 4){
+        $error = "Password minimal terdiri dari 4 karakter!";
+    } else {
+        $user_clean = mysqli_real_escape_string($conn, $user);
+        $data = mysqli_query($conn, "SELECT id, username, role FROM users WHERE username='$user_clean'");
         
-        // Memeriksa password yang di-hash atau password plaintext lama
-        if(password_verify($pass, $d['password']) || $d['password'] === $pass) {
-            
-            // Jika password masih plaintext, lakukan pembaruan menjadi hash
-            if($d['password'] === $pass) {
-                $new_hash = password_hash($pass, PASSWORD_DEFAULT);
-                $id_user = $d['id'];
-                mysqli_query($conn, "UPDATE users SET password='$new_hash' WHERE id='$id_user'");
-            }
+        if(mysqli_num_rows($data) > 0){
+            $d = mysqli_fetch_assoc($data);
+            $user_id = $d['id'];
+            $new_hash = password_hash($new_pass, PASSWORD_DEFAULT);
 
-            $_SESSION['login'] = true;
-            $_SESSION['role'] = $d['role'];
-            $_SESSION['id'] = $d['id'];
-
-            if($d['role']=="admin"){
-                header("location:admin/index.php");
-            }elseif($d['role']=="petugas"){
-                header("location:petugas/index.php");
-            }else{
-                // Pengunjung: Cek redirect parameter
-                if(isset($_POST['redirect']) && !empty($_POST['redirect'])){
-                    $redirect_url = $_POST['redirect'];
-                    // Konversi redirect jika merujuk ke beli.php (checkout tamu)
-                    if(strpos($redirect_url, 'beli.php') !== false){
-                        $redirect_url = str_replace('beli.php', 'pengunjung/pesan.php', $redirect_url);
-                    }
-                    header("location:" . $redirect_url);
-                } else {
-                    header("location:pengunjung/index.php");
-                }
+            $update = mysqli_query($conn, "UPDATE users SET password='$new_hash' WHERE id='$user_id'");
+            if($update){
+                $success = "Password untuk pengguna <strong>" . htmlspecialchars($d['username']) . "</strong> (" . strtoupper($d['role']) . ") berhasil diperbarui!";
+            } else {
+                $error = "Gagal memperbarui password. Silakan coba lagi!";
             }
-            exit;
-        }else{
-            $error = "Username atau Password salah!";
+        } else {
+            $error = "Username tidak ditemukan dalam sistem!";
         }
-    }else{
-        $error = "Username atau Password salah!";
     }
 }
 ?>
@@ -60,7 +43,7 @@ if(isset($_POST['login'])){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Catering Ibu Iqbal | Premium Taste</title>
+    <title>Lupa Password - Catering Ibu Iqbal</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -103,8 +86,8 @@ if(isset($_POST['login'])){
         /* CARD GLASSMORPHISM */
         .login-box {
             width: 100%;
-            max-width: 440px;
-            padding: 55px 45px;
+            max-width: 450px;
+            padding: 45px 40px;
             border-radius: 24px;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -117,22 +100,21 @@ if(isset($_POST['login'])){
             animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* ANIMASI */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(40px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .logo-container {
-            width: 80px;
-            height: 80px;
+            width: 75px;
+            height: 75px;
             background: var(--gold-light);
             border: 1px solid var(--gold);
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
             transition: var(--transition);
         }
@@ -140,27 +122,26 @@ if(isset($_POST['login'])){
         .logo-container:hover {
             transform: rotate(15deg) scale(1.05);
             background: rgba(212, 175, 55, 0.25);
-            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.3);
         }
 
         .logo-container i {
-            font-size: 32px;
+            font-size: 30px;
             color: var(--gold);
         }
 
         .login-box h2 {
             font-family: 'Playfair Display', serif;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 700;
-            font-size: 30px;
+            font-size: 28px;
             letter-spacing: 0.5px;
             color: #ffffff;
         }
 
         .subtitle {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: #b0b0b5;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
             letter-spacing: 1.5px;
             text-transform: uppercase;
         }
@@ -168,7 +149,7 @@ if(isset($_POST['login'])){
         /* INPUTS */
         .input-box {
             position: relative;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
             text-align: left;
         }
 
@@ -184,7 +165,7 @@ if(isset($_POST['login'])){
 
         .input-box input {
             width: 100%;
-            padding: 15px 15px 15px 50px;
+            padding: 14px 15px 14px 50px;
             border: 1.5px solid rgba(255, 255, 255, 0.08);
             border-radius: 14px;
             outline: none;
@@ -208,17 +189,6 @@ if(isset($_POST['login'])){
             color: var(--gold);
         }
 
-        /* Autofill Overrides */
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover, 
-        input:-webkit-autofill:focus, 
-        input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 1000px rgba(15, 15, 17, 0.95) inset !important;
-            -webkit-text-fill-color: #ffffff !important;
-            border: 1.5px solid rgba(212, 175, 55, 0.3) !important;
-            transition: background-color 5000s ease-in-out 0s;
-        }
-
         /* SHOW PASSWORD */
         .show-pass {
             position: absolute;
@@ -240,13 +210,13 @@ if(isset($_POST['login'])){
         .btn-login {
             width: 100%;
             padding: 15px;
-            margin-top: 15px;
+            margin-top: 10px;
             border: none;
             border-radius: 14px;
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
             color: var(--dark);
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             cursor: pointer;
@@ -261,36 +231,37 @@ if(isset($_POST['login'])){
             box-shadow: 0 12px 30px rgba(212, 175, 55, 0.35);
         }
 
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        /* ERROR */
+        /* ALERTS */
         .error-alert {
             background: rgba(238, 77, 45, 0.1);
             border: 1px solid rgba(238, 77, 45, 0.3);
             color: #ff6b6b;
-            padding: 14px 20px;
+            padding: 12px 18px;
             border-radius: 14px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             font-size: 0.88rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
             font-weight: 500;
-            animation: shake 0.5s ease;
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+        .success-alert {
+            background: rgba(55, 178, 77, 0.12);
+            border: 1px solid rgba(55, 178, 77, 0.3);
+            color: #51cf66;
+            padding: 14px 18px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            font-size: 0.88rem;
+            text-align: center;
+            line-height: 1.5;
         }
 
         /* LINKS */
         .links-container {
-            margin-top: 35px;
+            margin-top: 25px;
             font-size: 0.85rem;
             color: #a0a0a5;
             display: flex;
@@ -312,8 +283,8 @@ if(isset($_POST['login'])){
 
         .back-link {
             border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding-top: 20px;
-            margin-top: 20px;
+            padding-top: 18px;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -323,11 +294,11 @@ if(isset($_POST['login'])){
 <div class="login-box">
 
     <div class="logo-container">
-        <i class="fas fa-utensils"></i>
+        <i class="fas fa-key"></i>
     </div>
 
-    <h2>Selamat Datang</h2>
-    <div class="subtitle">Ibu Iqbal Catering</div>
+    <h2>Lupa Password</h2>
+    <div class="subtitle">Reset Password Akun Anda</div>
 
     <?php if($error){ ?>
         <div class="error-alert">
@@ -336,39 +307,41 @@ if(isset($_POST['login'])){
         </div>
     <?php } ?>
 
-    <form method="POST" autocomplete="off">
-        <!-- Dummy inputs to prevent browser autofill/autocomplete on load -->
-        <input type="text" name="prevent_autofill_user" style="position: absolute; top: -9999px; left: -9999px;" aria-hidden="true" tabindex="-1">
-        <input type="password" name="prevent_autofill_pass" style="position: absolute; top: -9999px; left: -9999px;" aria-hidden="true" tabindex="-1">
-
-        <!-- Input hidden to pass redirect target url -->
-        <?php if(isset($_GET['redirect'])){ ?>
-            <input type="hidden" name="redirect" value="<?= htmlspecialchars($_GET['redirect']); ?>">
-        <?php } elseif(isset($_POST['redirect'])) { ?>
-            <input type="hidden" name="redirect" value="<?= htmlspecialchars($_POST['redirect']); ?>">
-        <?php } ?>
-
-        <div class="input-box">
-            <i class="fas fa-user input-icon"></i>
-            <input type="text" name="username" placeholder="Username" required autocomplete="off">
+    <?php if($success){ ?>
+        <div class="success-alert">
+            <i class="fas fa-check-circle d-block mb-2" style="font-size: 1.8rem;"></i>
+            <div><?= $success; ?></div>
+            <a href="login.php" class="btn-login" style="display: block; text-decoration: none; margin-top: 15px; padding: 12px;">
+                <i class="fas fa-sign-in-alt me-1"></i> Ke Halaman Login
+            </a>
         </div>
+    <?php } else { ?>
 
-        <div class="input-box">
-            <i class="fas fa-lock input-icon"></i>
-            <input type="password" name="password" id="pass" placeholder="Password" required>
-            <i class="fas fa-eye show-pass" onclick="togglePass()"></i>
-        </div>
+        <form method="POST" autocomplete="off">
+            <div class="input-box">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" name="username" placeholder="Masukkan Username Anda" required autocomplete="off">
+            </div>
 
-        <div style="text-align: right; margin-top: -10px; margin-bottom: 18px;">
-            <a href="lupa_password.php" style="color: var(--gold); text-decoration: none; font-size: 0.82rem; font-weight: 500; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--gold)'"><i class="fas fa-key me-1"></i> Lupa Password?</a>
-        </div>
+            <div class="input-box">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" name="new_password" id="pass1" placeholder="Password Baru" required>
+                <i class="fas fa-eye show-pass" onclick="togglePass('pass1', this)"></i>
+            </div>
 
-        <button type="submit" name="login" class="btn-login">Masuk ke Akun</button>
-    </form>
+            <div class="input-box">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" name="confirm_password" id="pass2" placeholder="Konfirmasi Password Baru" required>
+                <i class="fas fa-eye show-pass" onclick="togglePass('pass2', this)"></i>
+            </div>
+
+            <button type="submit" name="reset_password" class="btn-login">Simpan Password Baru</button>
+        </form>
+
+    <?php } ?>
 
     <div class="links-container">
-        <p>Belum memiliki akun? <a href="daftar.php">Daftar Sekarang</a></p>
-        <p><a href="lupa_password.php"><i class="fas fa-unlock-alt me-1"></i> Lupa / Reset Password Akun</a></p>
+        <p>Sudah ingat password? <a href="login.php">Kembali ke Login</a></p>
         <div class="back-link">
             <a href="index.php"><i class="fas fa-arrow-left me-1"></i> Kembali ke Beranda</a>
         </div>
@@ -377,10 +350,8 @@ if(isset($_POST['login'])){
 </div>
 
 <script>
-function togglePass(){
-    var x = document.getElementById("pass");
-    var icon = document.querySelector(".show-pass");
-    
+function togglePass(id, icon){
+    var x = document.getElementById(id);
     if(x.type === "password"){
         x.type = "text";
         icon.classList.remove("fa-eye");
