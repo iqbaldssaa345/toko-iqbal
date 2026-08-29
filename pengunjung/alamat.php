@@ -8,8 +8,8 @@ include '../koneksi.php';
 
 $user_id = $_SESSION['id'];
 $q_pengunjung = mysqli_query($conn, "SELECT username FROM users WHERE id='$user_id'");
-$d_pengunjung = mysqli_fetch_assoc($q_pengunjung);
-$nama_pengunjung = $d_pengunjung['username'];
+    $d_pengunjung = mysqli_fetch_assoc($q_pengunjung);
+    $nama_pengunjung = $d_pengunjung['username'];
 
 /* TAMBAH */
 if(isset($_POST['tambah'])){

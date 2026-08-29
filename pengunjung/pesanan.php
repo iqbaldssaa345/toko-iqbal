@@ -23,20 +23,15 @@ if(isset($_POST['tambah'])){
 if(isset($_GET['hapus'])){
     $id = intval($_GET['hapus']);
 
-    // Cari pesanan_id, produk_id, dan jumlah dari detail_pesanan
-    $q_dp = mysqli_query($conn, "SELECT pesanan_id, produk_id, jumlah FROM detail_pesanan dp JOIN pesanan p ON dp.pesanan_id=p.id WHERE dp.id='$id' AND p.user_id='$user_id'");
-    if(mysqli_num_rows($q_dp) > 0) {
+    // Cari pesanan_id dari detail_pesanan milik user yang sedang login
+    $q_dp = mysqli_query($conn, "SELECT pesanan_id FROM detail_pesanan dp JOIN pesanan p ON dp.pesanan_id=p.id WHERE dp.id='$id' AND p.user_id='$user_id'");
+    if($q_dp && mysqli_num_rows($q_dp) > 0) {
         $r_dp = mysqli_fetch_assoc($q_dp);
         $pesanan_id = $r_dp['pesanan_id'];
-        $produk_id = $r_dp['produk_id'];
-        $jumlah = intval($r_dp['jumlah']);
         
-        // Kembalikan stok produk
-        mysqli_query($conn, "UPDATE produk SET stok = stok + $jumlah WHERE id='$produk_id'");
-        
-        // Hapus detail, pembayaran, lalu pesanan utamanya
-        mysqli_query($conn,"DELETE FROM detail_pesanan WHERE id='$id'");
+        // Hapus pembayaran & detail pesanan, lalu pesanan utamanya
         mysqli_query($conn,"DELETE FROM pembayaran WHERE pesanan_id='$pesanan_id'");
+        mysqli_query($conn,"DELETE FROM detail_pesanan WHERE pesanan_id='$pesanan_id'");
         mysqli_query($conn,"DELETE FROM pesanan WHERE id='$pesanan_id' AND user_id='$user_id'");
     }
 
